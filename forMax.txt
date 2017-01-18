@@ -1,0 +1,356 @@
+-------------------------------------
+крч....
+Я блять охуїтельний член команди
+ніфіга не встигаю
+Давай тепер працюватимемо на окремих вітках:
+- Я створю ше одну вітку просто develop - копію мастера
+- ти стоври maxDevelop і туди пуши всі зміни
+- і я створю solomkaDevelop і запушу туди всі свої зміни
+- а тоді будемо чере pullRequest обговорювати твій і мій варіант і тоді вже мерджети в develop, вирішуючи всі конфлути, 
+і тоді вже без конфліктів в master мерджети develop =)
+
+---------------------------------------
+
+1. Керуюсь рекомендаціями Шабінського -> 1 class - 1 responsibility
+                    => див фото схеми
+                    => я думаю повводити OrderService
+                                        InvoiceService...
+2. І ще думаю, що краще буде CreditCard не зберігати в наші бд (це по ходу твій Card), бо це ж небезпечно. Stripe теж їх не зберігає, а отримує ці дані і генерує на їх базі токен, який використовується для creqteCharge. Тому думає ствр у CharheManager private mathod :
+                                                                                                private String generateToken(СreditCard card){
+                                                                                                // ......
+                                                                                                }
+Вот. 
+3. * Invoice - обєкт, шо має наступну інфу:
+перечень товаров и услуг, их количество и цену, по которой они поставлены покупателю, формальные особенности товара (цвет, вес и т. д.), условия поставки и сведения об отправителе и получателе.
+  * Charge - це саме інфа для зняття гршей з CreditCard
+  * Payment - це вже проведена повністю оплата з результатом. Типу Charge здійснено успішно/неуспішно
+  Тому думаю перейменувати IPaymentManager на IChargeManager (може це й смішно, але це дуже плутає)
+
+  4. І ше знаєш, Шабінський сме говорив про одночасне існування Invoice object і Order object, але по тому всьому, шо я розумію, мен здається шо то одне й теж....?
+
+
+* Charge credit or debit cards
+* send Payment to bank accounts or debit cards      => without having to hold sensitive information on your own servers
+* collect personally identifiable information (PII)
+
+ Stripe.js makes this easy in the browser, but you can use the same technique in other environments with our token API.
+
+checkout ['ʧekaut] 1) контроль; каса в магазині самообслуговування; підрахунок вартості зроблених покупок
+
+ Order:
+
+ 0. id
+ 1. sum_total
+ 2. charge (payment_id)  => Present if the order status is paid, fulfilled, or refunded
+ 3. buyer (charged to pay the order)
+ 4. buyer_email
+ 5. items_list: [{
+                    "object": "order_item",
+                    "amount": 3084 grn,
+                    "currency": "usd",
+                    "description": "T-shirt",
+                    "parent": "sku_98dMiVopxu0m3r",
+                    "quantity": 2,
+                    "type": "sku"
+                 }]
+  6. shipping:   {
+                    "address": {
+                      "city": "Anytown",
+                      "country": "US",
+                      "line1": "1234 Main Street",
+                      "line2": null,
+                      "postal_code": "123456",
+                      "state": null
+                    },
+                    "carrier": null, (delivery service name)
+                    "name": "Jenny Rosen", (recepient)
+                    "phone": null,         (recepient)
+                    "tracking_number": null
+                  },
+  7. status:  created, paid, canceled, fulfilled, or returned
+  8. status_transitions{
+                        status: timestamp
+                        }
+
+  Invoice
+
+  0. id
+  1. business_name
+  2. business details
+  3. item description:
+The name, size (if applicable), type (if applicable), quantity, unit price and total price must be mentioned for each and every item that the customer purchases.
+4. Details and Modes of Payment
+In most B2C ecommerce, the invoice is actually generated after the payment has been received. In that case, the details of payment received should be mentioned.
+
+
+  Charge
+
+  1. amount (how much to charge)
+  2. currency
+  3. application_fee:
+
+        If you process a charge on the platform account, and use the destination parameter, the charge amount less the application fee will be deposited into the connected user’s account ($8.77, assuming a $1.23 application fee on a $10 charge). The application fee less the Stripe fees (on the charge amount) will be deposited into your account ($0.64, which is $1.23 - $0.59).
+
+        Connected user’s account: charge amount - app fee (10 -1.23) ($8.77, assuming a $1.23 application fee on a $10 charge)
+        Your platform Stripe account: app fee - Stripe fee ($0.64, which is $1.23 - $0.59)
+4. captured: true
+5. description (acc id)
+6. destination (Connect only)
+The ID of the resulting transfer will be returned in the transfer field of the response
+7. receipt_email
+The receipt will not be sent until the charge is paid.
+8. shipping {
+                    "address": {
+                      "city": "Anytown",
+                      "country": "US",
+                      "line1": "1234 Main Street",
+                      "line2": null,
+                      "postal_code": "123456",
+                      "state": null
+                    },
+                    "carrier": null, (delivery service name)
+                    "name": "Jenny Rosen", (recepient)
+                    "phone": null,         (recepient)
+                    "tracking_number": null
+                    The tracking number for a physical product, obtained from the delivery service. If multiple tracking numbers were generated for this purchase, please separate them with commas.
+                  },
+9. customer
+10. source => * credit card token
+              * Credit Card info Map
+
+11. created (timestamp)
+12. failure_code
+13. failure_message
+14. invoice
+15. order
+16. paid
+true if the charge succeeded, or was successfully authorized for later capture.
+17.source_transfer 
+The transfer ID which created this charge. Only present if the charge came from another Stripe account.
+18. transfer
+ID of the transfer to the destination account (only applicable if the charge was created using the destination parameter).
+:destination =>The ID of the resulting transfer will be returned in the transfer field of the response.
+19. status: succeeded, pending, or failed
+
+Account for seller
+
+country
+email
+managed: true
+business_name
+business_url (web site)
+display_name => The display name for this account. This is used on the Stripe dashboard to help you differentiate between accounts.
+external accounts (bank accounts and/or cards)=> The list contains all external accounts that have been attached to the Stripe account. These may be bank accounts or cards.
+Managed accounts have an external_accounts property: a list of all bank accounts and debit cards associated with the Stripe account. Any external account is a possible destination for funds.
+{
+product_description
+
+
+
+                        ***
+                    Token creation
+                        ***
+
+Stripe.apiKey = "sk_test_BQokikJOvBiI2HlWgH4olfQ2";
+
+Map<String, Object> tokenParams = new HashMap<String, Object>();
+Map<String, Object> cardParams = new HashMap<String, Object>();
+cardParams.put("number", "4242424242424242");
+cardParams.put("exp_month", 10);
+cardParams.put("exp_year", 2017);
+cardParams.put("cvc", "314");
+tokenParams.put("card", cardParams);
+
+Token.create(tokenParams);
+
+
+                        ***
+                  Customer creation
+                        ***
+
+// Set your secret key: remember to change this to your live secret key in production
+// See your keys here: https://dashboard.stripe.com/account/apikeys
+Stripe.apiKey = "sk_test_BQokikJOvBiI2HlWgH4olfQ2";
+
+// Get the credit card details submitted by the form
+String tokenID = request.getParameter("stripeToken");
+
+// Create a Customer
+Map<String, Object> customerParams = new HashMap<String, Object>();
+customerParams.put("source", tokenID);
+customerParams.put("description", "Example customer");
+
+Customer customer = Customer.create(customerParams);
+
+                        ***
+                  Managed account creation
+                        ***
+
+Stripe.apiKey = PLATFORM_SECRET_KEY;
+
+Map<String, Object> accountParams = new HashMap<String, Object>();
+accountParams.put("country", "US");
+accountParams.put("managed", true);
+
+Account.create(accountParams);
+
+Response:
+
+{
+  ...
+  "id": "acct_12QkqYGSOD4VcegJ",
+  "keys": {
+    "secret": "sk_live_AxSI9q6ieYWjGIeRbURf6EG0",
+    "publishable": "pk_live_h9xguYGf2GcfytemKs5tHrtg"
+  },
+  "managed": true
+  ...
+}
+
+                        ***
+         Add external account to Managed account 
+                        ***
+
+Stripe.apiKey = "sk_test_BQokikJOvBiI2HlWgH4olfQ2";
+
+Account account = Account.retrieve("acct_1032D82eZvKYlo2C", null);
+Map<String, Object> params = new HashMap<String, Object>();
+params.put("external_account", "btok_9Ismt3LyXqN995");
+account.getExternalAccounts().create(params);
+
+
+                        ***
+Charge creation in On-demand app implementation (Managed accounts)
+                        ***
+
+// Set your secret key: remember to change this to your live secret key in production
+// See your keys here: https://dashboard.stripe.com/account/apikeys
+Stripe.apiKey = "sk_test_BQokikJOvBiI2HlWgH4olfQ2";
+
+Map<String, Object> chargeParams = new HashMap<String, Object>();
+chargeParams.put("amount", 1000);
+chargeParams.put("currency", "usd");
+chargeParams.put("source", {TOKEN});
+chargeParams.put("destination", {CONNECTED_STRIPE_ACCOUNT_ID});
+
+Charge.create(chargeParams);
+
+6f21f87
+
+***************************
+VO/DTO/BO
+**************************
+
+* VO(Value object) = DTO (Data transfer object) - * ARE IMMUTABLE - FINAL
+                                                  * will be used across the application as a vendor 
+                                                  * finally is used to populate the BO
+                                                  * merely is for transferring data from one layer to the persistent entity.
+
+* You can usually tell them because their notion of equality isn't based on identity, instead two value objects are equal if all their fields are equal. Although all fields are equal, you don't need to compare all fields if a subset is unique - for example currency codes for currency objects are enough to test equality.
+A general heuristic is that value objects should be entirely immutable. If you want to change a value object you should replace the object with a new one and not be allowed to update the values of the value object itself - updatable value objects lead to aliasing problems.
+
+* Data transfer object (DTO), formerly known as value objects or VO, is a design pattern used to transfer data between software application subsystems. DTOs are often used in conjunction with data access objects to retrieve data from a database.
+
+The difference between data transfer objects and business objects or data access objects is that a DTO does not have any behaviour except for storage and retrieval of its own data (accessors and mutators).
+
+In a traditional EJB architecture, DTOs serve dual purposes: first, they work around the problem that entity beans are not serializable; second, they implicitly define an assembly phase where all data to be used by the view is fetched and marshalled into the DTOs before returning control to the presentation tier.
+
+* BO (Business object)/ DAO (Data access object) - * actual business entity object
+                         * the class that represents your real world vendor
+                         * This is what gets persisted to the DB 
+
+*  A JavaBean is a POJO that is serializable, has a no-argument constructor, and allows access to properties using getter and setter methods
+
+
+          ***
+  Builder design pattern
+          ***
+
+“Separate the construction of a complex object from its representation so that the same construction process can create different representations.”
+****
+
+Telescopic constructor pattern 
+        |
+follow JavaBeans conventions by writing setter methods instead of a set of constructors to initialize the fields.
+        |
+Builder design pattern
+
+
+
+In the context of the house building example, the step-by-step process includes the steps to create the foundation, structure, and roof followed by the steps to paint and furnish a house and these steps remain the same irrespective of the type of house to build. The finished product, which is a house, can have different representations. That is, it can be a concrete house, a prefabricated house, or a tree house.
+
+TO build house:
+
+1. construction engineer
+2. a concrete house builder
+
+Building process...
+
+HouseBuilder concreteHouseBuilder = new ConcreteHouseBuilder()
+ConstructionEngenieer engenieer = new ConstructionEngenieer(concreteHouseBuilder)
+engenieer.createHouse();
+
+
+            ***
+  Factory Method Design Pattern
+            ***
+
+“Program to an interface, not an implementation“,
+
+Pizza (abstract class)
+   |              |
+Cheese Pizza     Veggie Pizza 
+
+BasePizzaFactory (abstract class) (Creator)
+    |
+Pizza Factory - create pizza according to its type
+
+
+
+          ***
+  Abstract factory vs Factory Method Design Pattern
+          ***    
+
+Abstract factory adds another level of abstraction to factory method.
+While factory method abstracts the way objects are created, abstract factory abstracts how the factories are created.
+The factories in turn abstracts the way objects are created. You will often hear the abstract factory design pattern referred to as a “factory of factories“.
+
+***
+
+
+            ***
+Abstract factory vs builder
+            ***
+In short abstract factory is concerned with what is made, while the builder with how it is made.
+
+So as you go further into enterprise application development, whenever you need to create complex objects independently of the construction algorithm turn to the classic GoF Builder Pattern!
+
+
+***
+CreditCard Service:
+  1. create CreditCardVO
+  2. validate CreditCardVO
+  3. save CreaditCard to BD through CreditCardService in DeferredResult
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                      ***
+                                            Our business logic process
+                                                      ***
+
+
+1. OrderController:
+        OrderVO
+        OrderBO
+2. ChargeController
+        ChargeVO (Controller -> Service)
+        ChargeManagerObject (Service -> Manager)
+        Payment (Service) -> ChargeVO info                                  => create in ChargeService
+                             ChargeManagerRequestObject info
+                             ChargeManagerResponceObject / ( Some info in some form ) => PaymentManager Response (Success / Failure Payment )
+        * ( Return NEW ChargeVO ) / ( Some info in some form ) to Controller => Response Result to User
+
+
+79ee167
+
+src/main/java/ukma/eCommerce/core/paymentModule/model/domain/vo/

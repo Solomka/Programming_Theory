@@ -1,0 +1,25 @@
+VALUE OBJECT VS. DATA TRANSFER OBJECT (VO VS. DTO)
+
+The pattern which is known today as Data Transfer Object was mistakenly (see this definition) called Value Object in the first version of the Core J2EE Patterns. The name was corrected in the second edition of the Core J2EE Patterns book, but the name "Value Object" became very popular and is still used as an alias for the actual DTOs. There is, however, a real difference between both patterns:
+
+* A Data Transfer Object (DTO) is just as stupid data container which is used to transport data between layers and tiers. It mainly contains of attributes. Actually you can even use public attributes without any getters / setters, but this will probably cause too much meetings and discussions :-). DTOs are anemic in general and do not contain any business logic. DTOs are often java.io.Serializable - its only needed if you are going to transfer the data across JVMs.
+* A Value Object [1,2] represents itself a fix set of data and is similar to a Java enum. A Value Object doesn't have any identity, it is entirely identified by its value and is immutable. A real world example would be Color.RED, Color.BLUE, SEX.FEMALE etc.
+
+GENERAL:
+    * DTO - stupid data container which is used to transport data between layers and tiers
+            do not contain any business logic
+            you can even use public attributes without any getters / setters
+            are often java.io.Serializable - its only needed if you are going to transfer the data across JVMs.
+        "An object that carries data between processes in order to reduce the number of method calls."
+
+    * VO - represents itself a fix set of data and is similar to a Java enum
+           doesn't have any identity
+           entirely identified by its value
+           immutable
+           A real world example would be Color.RED, Color.BLUE, SEX.FEMALE
+
+In many cases , a Value Object is same as the DTO(Data transfer object) . In your case , ABCVendor.java is the business object(BO) i.e, the actual business entity object . This is the class that represents your real world vendor . This is what gets persisted to the DB .
+ABCVendorVO.java is like a DTO . It will be used across the application as a vendor , but finally is used to populate the BO . DTO merely is for transferring data from one layer to the persistent entity.
+
+
+

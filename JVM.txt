@@ -1,0 +1,1 @@
+When Java bytecode is executed by an interpreter, the execution will always be slower than the execution of the same program compiled into native machine language. 

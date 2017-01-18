@@ -1,0 +1,86 @@
+                                                                            ***
+                                                                         Interface
+                                                                            ***
+
++ нема обєктів
+- нема полів:
+                all fields are automatically public, static, and final
+- all methods that you declare or define (as default methods) are public
+- default methods;
+- static methods;
+- nested types;
+- оголошення методів:
+     public void addCategory(final Category cat);
++ всі методи мусять бути перевизначені
+- множинне наслідування
+
+An interface is a reference type, similar to a class, that can contain only constants, method signatures, default methods, static methods, and nested types. Method bodies exist only for default methods and static methods.
+
+Class implements Interface:
+
+    public interface CategoryService
+    public class CategoryServiceImpl implements CategoryService
+
+
+                                                                                ***
+                                                                            Abstract class 
+                                                                                *** 
+
++ нема обєктів
+- можуть бути поля:
+                    you can declare fields that are not static and final
+- методи: protected, public, private:
+                    define public, protected, and private concrete methods 
+- they may contain a mix of methods declared with or without an implementation
+- оголошення abstract method -> мусить бути перевизначеня, якшо ні, то клас, який extends abstract class теж стає abstract
++ 1 батько, нема множинного наслідування
+
+
+
+
+Class extends Abstract class
+
+public abstract class GraphicObject {
+   // declare fields
+   // declare nonabstract methods
+   abstract void draw();
+}
+
+
+
+***
+Abstarct class vs Interface
+***
+
+Consider using abstract classes if any of these statements apply to your situation:
+        - You want to share code among several closely related classes.
+        - You expect that classes that extend your abstract class have many common methods or fields, or require access modifiers other than public (such as protected and private).
+        - You want to declare non-static or non-final fields. This enables you to define methods that can access and modify the state of the object to which they belong.
+
+Consider using interfaces if any of these statements apply to your situation:
+        - You expect that unrelated classes would implement your interface. For example, the interfaces Comparable and Cloneable are implemented by many unrelated classes.
+        - You want to specify the behavior of a particular data type, but not concerned about who implements its behavior.
+        - You want to take advantage of multiple inheritance of type.
+
+Abstract classes:
+
+Can have member variables that are inherited (can’t be done in interfaces)
+Can have constructors (interfaces can’t)
+Its methods can have any visibility (ie: private, protected, etc - whereas all interface methods are public)
+Can have defined methods (methods with an implementation)
+Interfaces:
+
+Can have variables, but they are all public static final variables
+constant values that never change with a static scope
+non static variables require an instance, and you can’t instantiate an interface
+All methods are abstract (no code in abstract methods)
+all code has to be actually written in the class that implements the particular interface
+
+------------------------------------------------------------------------------------------------
+
+* Abstract class establishes "is a" relation between related classes 
+* Interface provides "has a" capability between unrelated classes.
+
+Abstract classes are similar to interfaces. You cannot instantiate them, and they may contain a mix of methods declared with or without an implementation. However, with abstract classes, you can declare fields that are not static and final, and define public, protected, and private concrete methods.
+
+With interfaces, all fields are automatically public, static, and final, and all methods that you declare or define (as default methods) are public. In addition, you can extend only one class, whether or not it is abstract, whereas you can implement any number of interfaces.

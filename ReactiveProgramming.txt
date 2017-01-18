@@ -1,0 +1,165 @@
+RxJava: Reactive Extensions for the JVM
+
+------------------------------
+RxJava is a Java VM implementation of Reactive Extensions: a library for composing asynchronous and event-based programs by using observable sequences.
+
+It extends the observer pattern to support sequences of data/events and adds operators that allow you to compose sequences together declaratively while abstracting away concerns about things like low-level threading, synchronization, thread-safety and concurrent data structures.
+------------------------------
+
+An observer subscribes to an Observable. 
+An Observable emits items or sends notifications to its observers by calling the observers’ methods. 
+
+Observable.subscribe(Observer/Subscriber/Watcher/Reactor); 
+
+* The Subscribe method is how you connect an observer to an Observable 
+    Your observer implements some subset of the following methods: 
+        * onNext 
+            An Observable calls this method whenever the Observable emits an item. This method takes as a parameter the item emitted by the Observable.
+
+
+--------------
+Scheduler
+--------------
+
+By default, an Observable and the chain of operators that you apply to it will do its work, and will notify its observers, on the same thread on which its Subscribe method is called.
+
+ * SubscribeOn -> specify a different Scheduler on which the Observable should operate.
+
+    Why the name subscribeOn?
+        This is because the computation as part of Observable gets executed only when the subscribe() method is called on the Observable.
+
+        SubscribeOn tells the RxJava library to perform the computation, declared as part of the Observable, on a thread provided by the Scheduler. 
+        In the example below the subscribeOn(Schedulers.newThread()) instructs RxJava to do the computation on a new thread.
+        As defined by the default behaviour, the computations as part of Operator and the Subscriber run on the thread which Observable runs, which in this case is a new thread.
+
+        SubscribeOn operator designates which thread the Observable WILL BEGIN OPERATING on, no matter at what point in the chain of operators that operator is called. 
+
+
+ * ObserveOn   -> specify a different Scheduler that the Observable will use to send notifications to its observers.
+
+    Why the name observeOn?
+        This is because both the Operators and Subscriber observe the events/data emitted by Observable. 
+        Operators, after observing events/data, transmits them to subsequent Operators, if any, or transmits them to a Subscriber.
+
+        ObserveOn  affects the thread that the Observable will use below where that operator appears.
+
+        observeOn method tells RxJava library to perform the computation, as part of Operator or Subscriber declared after its definition, on a thread provided by the Scheduler.
+
+----------------------------------------------------------------------------------------------------
+
+The difference should be clearer when you look at the behaviour of each when you pass it an Iterable (for example a List):
+
+Observable.just(someList) will give you 1 emission - a List.
+
+Observable.from(someList) will give you N emissions - each item in the list.
+
+The ability to pass multiple values to just is a convenience feature; the following are functionally the same:
+
+Observable.just(1, 2, 3);
+Observable.from(1, 2, 3);
+
+----
+
+Timestamp -> 
+
+ java.util.Date date= new java.util.Date();
+     System.out.println(new Timestamp(date.getTime()));
+
+     2010-03-08 14:59:30.252 (yaer/month/date)
+
+---
+
+concurrency - збіг, співпадіння
+composition - зєднання, створення
+resilience - пружність, еластиічнсть
+
+ATM (Automated Teller Machine)
+withdraw some cash from debit card - зняти грошу з депозитного рахунку
+verbose - багатослівний
+inferred - вгаданий
+
+-----------
+
+* Intermediate operations transforms one stream to another, while terminal operations produce a result. 
+
+-----------
+
+Programming languages:
+
+1. Java -> 
+                Multi-paradigm: Object-oriented (class-based), structured, imperative, generic, reflective, concurrent
+
+                Designed by James Gosling (Nationality  Canadian)
+
+                Developer  Sun Microsystems (now owned by Oracle Corporation)
+2. C++ ->
+                It has imperative, object-oriented and generic programming features, while also providing facilities for low-level memory manipulation.
+
+                Multi-paradigm: procedural, functional, object-oriented, generic[1]
+
+                Designed by Bjarne Stroustrup (Nationality  Danish)
+
+3. Ruby ->
+            Ruby is a language of careful balance. Its creator, Yukihiro “Matz” Matsumoto, blended parts of his favorite languages (Perl, Smalltalk, Eiffel, Ada, and Lisp) to form 
+            a new language that balanced functional programming with imperative programming.
+
+            Ruby is simple in appearance, but is very complex inside, just like our human body1.
+
+            It supports multiple programming paradigms, including functional, object-oriented, and imperative. 
+            Multi-paradigm: Object-oriented, imperative, functional, reflective
+
+            Developer   Yukihiro Matsumoto 'Matz', et al. ( Nationality Japan)
+
+4. JavaScript ->
+                Multi-paradigm: scripting, object-oriented (prototype-based), imperative, functional, event-driven[1]
+
+                Designed by Brendan Eich (American)
+
+5. Python ->
+            Python supports multiple programming paradigms, including object-oriented, imperative and functional programming or procedural styles. 
+
+                multi-paradigm: object-oriented, imperative, functional, procedural, reflective
+
+                Designed by Guido van Rossum (Nationality   Dutch)
+
+6. Perl ->
+                multi-paradigm: functional, imperative, object-oriented (class-based), reflective, procedural, event-driven, generic
+
+                Developer   Larry Wall (Nationality American)
+
+
+7. C ->
+
+                Imperative (procedural), structured
+
+                Designed by Dennis Ritchie (Nationality American)
+
+8. C# -> 
+                multi-paradigm: structured, imperative, object-oriented, event-driven, task-driven, functional, generic, reflective, concurrent
+
+                Designed by Microsoft
+9. Scala ->
+                Scala has full support for functional programming and a strong static type system. Designed to be concise,[10] many of Scala's design decisions were inspired by criticism of Java's shortcomings (недолік)
+
+                Multi-paradigm: functional, object-oriented, imperative, concurrent
+
+                Designed by    Martin Odersky ( Nationality  German )
+
+ *** code written for Apple products ***
+
+10. Objective-C ->
+                Objective-C is a general-purpose, object-oriented programming language that adds Smalltalk-style messaging to the C programming language. It was the main programming language used by Apple for the OS X and iOS operating systems, and their respective application programming interfaces (APIs) Cocoa and Cocoa Touch prior to the introduction of Swift.
+
+                Paradigm    Reflective, class-based object-oriented
+
+11. Swift ->   
+                Multi-paradigm: protocol-oriented, object-oriented, functional, imperative, block structured
+
+                Designed by Chris Lattner (Nationality  American) and Apple Inc.
+
+                Developer   Apple Inc.
+
+
+
+
+

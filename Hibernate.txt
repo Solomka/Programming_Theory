@@ -1,0 +1,75 @@
+*********************************** Hibernate ***********************************
+
+Bidirectional association 
+
+------------
+OrderPO.java
+------------
+
+@OneToMany(fetch = FetchType.LAZY, mappedBy = "orderItemId.order", cascade = { CascadeType.PERSIST,
+                CascadeType.MERGE })
+@Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    public List<OrderItemPO> getOrderItems() {
+        return this.orderItems;
+    }
+
+----------------
+OrderItemPO.java
+----------------
+
+@ManyToOne - owner of the relationship
+public OrderPO getOrder() {
+       return order;
+   }
+
+
+********************** Hibernate/JPA - annotating bean methods vs fields ************************
+
+Yes, I believe you want to search on field versus property access:
+
+The Spring preference is field access. That's what I follow.
+
+http://docs.spring.io/spring/docs/2.5.x/reference/orm.html
+
+********************** Advanced Hibernate: Proxy Pitfalls *****************************
+
+The proxy class is a subclass of the Person class, so it contains the same fields, but it also contains some added fields.
+The most important is CGLIB$CALLBACK_0, which is set to an instance of CGLIBLazyInitializer, which is a Hibernate class:
+
+private CGLIBLazyInitializer CGLIB$CALLBACK_0 =  new CGLIBLazyInitializer();
+
+This is the object that enables the proxy to load the data when needed.
+It contains a "target" field, that will contain the Hibernate loaded object when the data is loaded.
+
+************************* Hibernate Eager vs Lazy Fetch Type ****************************
+
+Any time you see a 
+@OneToOne
+@OneToMany
+@ManyToMany 
+annotations, you’ve got a relationship.
+ What’s important to note is that the fetch type should be specified within those annotations, if you don’t specify one then it defaults to FetchType.LAZY.
+
+
+
+
+
+
+ ********
+ LINKS
+ ********
+
+ http://stackoverflow.com/questions/3927091/save-child-objects-automatically-using-jpa-hibernate
+ http://docs.jboss.org/hibernate/core/3.3/reference/en/html/tutorial.html#tutorial-associations-usingbidir
+ https://docs.jboss.org/hibernate/orm/3.3/reference/en/html/example-parentchild.html
+ https://notesonjava.wordpress.com/2008/11/03/managing-the-bidirectional-relationship/
+ http://blog.xebia.com/advanced-hibernate-proxy-pitfalls/
+ https://howtoprogramwithjava.com/hibernate-eager-vs-lazy-fetch-type/
+
+ So, the long story short here is:
+
+FetchType.LAZY = Doesn’t load the relationships unless explicitly “asked for” via getter
+FetchType.EAGER = Loads ALL relationships
+
+ @OneToMany and @ManyToMany associations are defaulted to LAZY loading; 
+ @OneToOne and @ManyToOne are defaulted to EAGER loading. 

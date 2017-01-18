@@ -1,0 +1,908 @@
+*********************************************************** Java Collections ************************************************************
+
+List - збереження послідовності елементів
+Stack
+Queue
+Dequeue
+Set (множина) - забезпечує унікальність значення для кожного типу
+Map(карта, асоціативний масив)
+
+----------
+Lection11
+YaremkoS_P3
+YaremkoS_H3
+YaremkoS_Pr5
+
+***
+
+http://www.javatpoint.com/collections-in-java
+https://habrahabr.ru/post/182776/
+
+https://docs.oracle.com/javase/8/docs/technotes/guides/collections/index.html
+
+https://proglib.io/p/google-guide-for-studying/
+-----------
+Java SE (Standard Edition):
+                            This is the core Java programming platform. It contains all of the libraries and APIs that any Java programmer should learn (java.lang, java.io, java.math, java.net, java.util, etc...).
+
+Java EE (Enterprise Edition):
+                            The Java platform (Enterprise Edition) differs from the Java Standard Edition Platform (Java SE) in that it adds libraries which provide functionality to deploy fault-tolerant, distributed, multi-tier Java software, based largely on modular components running on an application server.
+
+                            Built on top of Java SE, it provides libraries for database access (JDBC, JPA), remote method invocation (RMI), messaging (JMS), web services, XML processing, and defines standard APIs for Enterprise JavaBeans, servlets, portlets, Java Server Pages, etc...
+Java ME (Micro Edition):
+                            his is the platform for developing applications for mobile devices and embedded systems such as set-top boxes. Java ME provides a subset of the functionality of Java SE, but also introduces libraries specific to mobile devices. Because Java ME is based on an earlier version of Java SE, some of the new language features introduced in Java 1.5 (e.g. generics) are not available.
+-------------------------------------------------------------------------------------------------------------------------------------
+Параметризовані типи (generics) - класи, які компілятор може автоматично адаптувати для роботи з визначеними типами.
+
+The collections framework
+
+The collections framework is a unified architecture for representing and manipulating collections, enabling them to be manipulated independently of the details of their representation. It reduces programming effort while increasing performance. It enables interoperability among unrelated APIs, reduces effort in designing and learning new APIs, and fosters software reuse. The framework is based on more than a dozen collection interfaces. It includes implementations of these interfaces and algorithms to manipulate them.
+
+All collections frameworks contain the following:
+
+Interfaces: These are abstract data types that represent collections. Interfaces allow collections to be manipulated independently of the details of their representation. In object-oriented languages, interfaces generally form a hierarchy.
+Implementations: These are the concrete implementations of the collection interfaces. In essence, they are reusable data structures.
+Algorithms: These are the methods that perform useful computations, such as searching and sorting, on objects that implement collection interfaces. The algorithms are said to be polymorphic: that is, the same method can be used on many different implementations of the appropriate collection interface. In essence, algorithms are reusable functionality.
+
+Інтероперабельність – здатність різних програм, систем та мереж до ефективної спільної роботи, обміну інформацією та її використання – стала такою ж важливою характеристикою програмного забезпечення, як надійність та безпека.
+
+В Java існує кілька способів зберігання об'єктів:
+    Масиви:
+            1. У масивах об'єктах призначаються числові індекси. 
+            2. Масив містить об'єкти заздалегідь відомого типу, тому перетворення типу при вибірці об'єкта не потрібно проводити.  
+            3. Масив може бути багатовимірним і може використовуватися для зберігання примітивних типів. 
+            4. Проте змінити розмір створеного масиву неможливо.
+
+            Students[] list=new Students[4];
+            int [] i = new int[4];
+    Collection: Collection represents a single unit of objects i.e. a group.
+            1. У Collection зберігаються окремі елементи, а в Mар - пари асоційованих елементів. 
+            2. Механізм параметризації дозволяє задати тип об'єктів, що зберігаються в контейнері, тому помістити в контейнер об'єкт невірного типу неможливо, і елементи не потребують перетворення типу при вибірці. 
+            3. І Collection, і Map автоматично змінюються в розмірах при додаванні нових елементів. 
+            4. У контейнерах не можуть зберігатися примітиви, але механізм автоматичної упаковки автоматично створює об'єктні «обгортки», які зберігаються в контейнері.
+
+            5. У контейнері List, як і в масиві, об'єктам призначаються числові індекси - таким чином, масиви і List є впорядкованими контейнерами.
+            6. Використовуйте ArrayList при частому використанні довільного доступу до елементів або LinkedList при частому виконанні операцій вставки і видалення в середині списку.
+            7. Поведінка Queue Deque Stack забезпечується контейнером LinkedList.
+
+           8. Контейнер Map пов'язує з об'єктом не цілочисельний індекс, а інший об'єкт. 
+           9. Контейнери HashMap оптимізовані для швидкого доступу, 
+              а контейнер ТгееМар зберігає ключі в відсортованому порядку, але поступається за швидкістю HashMap. 
+              У контейнері LinkedHashMap елементи зберігаються в порядку вставки, але Хешування забезпечує швидкий доступ.
+
+            10. У контейнері Set кожен об'єкт може зберігатися тільки в одному екземплярі. 
+            11. Контейнер HashSet забезпечує максимальну швидкість пошуку, 
+                а в TreeSet елементи зберігаються в відсортованому порядку. 
+                У контейнері LinkedHashSet елементи зберігаються в порядку вставки.
+            12. Використовувати старі класи Vector, Stack і Hashtable в новому коді не потрібно.
+
+
+Бібліотека утиліт Java (java.util .*) також містить достатньо повний набір класів контейнерів (також відомих, як класи колекцій, але, оскільки ім'я Collection (колекція) використовується для позначення певної підмножини бібліотеки Java, я буду вживати загальний термін «контейнер») . 
+Директива ©SuppressWarnings для придушення попереджень. 
+
+2 базових інтерфейси бібліотеки java.util.*:
+    * Collection (Колекція) - група окремих елементів, сформована за деякими правилами:
+
+                Клас List (список) зберігає елементи в порядку вставки, 
+                в класі Set (множина) не можна зберігати повторювані елементи, 
+                а клас Queue (черга) видає елементи в порядку, визначеному специфікою черги (зазвичай це порядок вставки елементів в чергу).
+
+                (* Queue - FIFO - first in first out 
+                 * Stack - LIFO - last in first out)
+
+        Інтерфейс Collection представляє концепцію послідовності як способу зберігання групи об'єктів
+
+    * Map (Карта) - набір пар об'єктів «ключ-значення», з можливістю вибірки по ключу. 
+
+                ArrayList дозволяє шукати об'єкти за номером, тому в якомусь сенсі він пов'язує числа з об'єктами. 
+                Клас Map (карта - також зустрічаються терміни асоціативний масив і словник) дозволяє шукати об'єкти по інших об'єктах - наприклад, отримати об'єкт значення по об'єкту ключа, за аналогією з пошуком визначення по слову.
+
+                                                                *** deep copy vs shallow copy ***
+
+Shallow copies duplicate as little as possible. A shallow copy of a collection is a copy of the collection structure, not the elements. With a shallow copy, two collections now share the individual elements.
+
+Deep copies duplicate everything. A deep copy of a collection is two collections with all of the elements in the original collection duplicated.
+
+                                                            *** Додавання груп елементів ***
+
+Сімейства Arrays і Collections в java.util містять допоміжні методи для включення груп елементів в колекції. 
+Метод Arrays.asList () отримує або масив, або список елементів, розділених комами, і перетворює його на об'єкт List.
+      Arrays.toString() 
+Метод Collections.addAll() отримує об'єкт Collection і або масив, або список, розділений комами, і додає елементи в Collection.
+
+-------------------------------------------------------------------------------------------------------------------------------
+***
+Collection vs Collections
+***
+
+First of all, "Collection" and "Collections" are two different concepts.
+ "Collection" is a root interface in the Collection hierarchy
+ "Collections" is a class which provide static methods to manipulate on some Collection types.
+
+                                                                  ***
+                                                                  Array
+                                                                  ***
+
+Масив — це структура даних, що являє собою однорідну, фіксовану по розміру й конфігурації сукупність елементів простої або складеної структури, упорядкованих по номерах.
+Масив визначається ім'ям (ідентифікатором) і кількістю розмірностей (координат), необхідних для вказівки місцезнаходження необхідного елемента масиву. 
+Ім'я масиву є єдиним для всіх його елементів.
+
+Оскільки конфігурація елементів масиву фіксована, то до окремого елемента можна звертатися за допомогою одного або декількох індексів, залежно від кількості розмірностей масиву. 
+Елементами масивів можуть бути як змінні примітивних типів, так і екземпляри класів.
+Як правило, використаються одномірні, двомірні й тривимірні масиви. 
+Масиви більшої розмірності на практиці зустрічаються рідко.
+
+
+
+
+                                                                  ***
+                                                                  List
+                                                                  ***
+
+
+List<Type> testList = new ArrayList<Type>();
+
+An ordered collection (also known as a sequence). The user of this interface has precise control over where in the list each element is inserted. The user can access elements by their integer index (position in the list), and search for elements in the list.
+Unlike sets, lists typically allow duplicate elements. More formally, lists typically allow pairs of elements e1 and e2 such that e1.equals(e2), and they typically allow multiple null elements if they allow null elements at all. It is not inconceivable that someone might wish to implement a list that prohibits duplicates, by throwing runtime exceptions when the user attempts to insert them, but we expect this usage to be rare.
+
+Контейнери List гарантують певний порядок проходження елементів.
+Інтерфейс List доповнює Collection кількома методами, що забезпечують вставку і видалення елементів в середині списку.
+
+Collection different methods:
+
+    void    add(int index, E element) - Inserts the specified element at the specified position in this list (optional operation).
+    boolean addAll(int index, Collection<? extends E> c) - Inserts all of the elements in the specified collection into this list at the specified position (optional operation).
+    E get(int index) - Returns the element at the specified position in this list.
+    E remove(int index) - Removes the element at the specified position in this list (optional operation).
+    default void sort(Comparator<? super E> c) - Sorts this list according to the order induced by the specified Comparator.
+    int indexOf(Object o) - Returns the index of the first occurrence of the specified element in this list, or -1 if this list does not contain the element.
+
+Існує дві основні різновиди List:
+Базовий контейнер ArrayList, оптимізований для довільного доступу до елементів, але з відносно повільними операціями вставки(видалення) елементів в середині списку.
+
+Контейнер LinkedList, оптимізований для послідовного доступу, з швидкими операціями вставки (видалення) у середині списку;
+Довільний доступ до елементів LinkedList виконується відносно повільно, але по широті можливостей він перевершує ArrayList.
+
+
+    ArrayList:
+                + час вибору будь-якого елемента незмінний
+
+    Resizable-array implementation of the List interface. Implements all optional list operations, and permits all elements, including null. In addition to implementing the List interface, this class provides methods to manipulate the size of the array that is used internally to store the list. (This class is roughly equivalent to Vector, except that it is unsynchronized.)
+
+        Methods:
+
+               (Collection) removeIf(Predicate<? super E> filter) - Removes all of the elements of this collection that satisfy the given predicate.
+                removeRange(int fromIndex, int toIndex) - Removes from this list all of the elements whose index is between fromIndex,  inclusive, and toIndex, exclusive.
+                ensureCapacity(int minCapacity) - Increases the capacity of this ArrayList instance, if necessary, to ensure that it can hold at least the number of elements specified by the minimum capacity argument.
+                size() - к-сть елементів у списку
+
+
+                
+
+    LinkedList (методи Stack Queue Deque)
+                - не вигідно працювати з довільним доступом:
+                    чим далі по списку, тим більший час знаходження елемента
+                + швидка вставка всередину списку
+
+         Methods:
+
+            getFirst () | element () ідентичні - вони повертають початок (перший елемент) списку без його видалення і видають виняток NoSuchElementException для порожнього списку. 
+            peek() представляє собою невелику модифікацію цих двох методів: він повертає null для порожнього списку.
+            peekFirst() - Retrieves, but does not remove, the first element of this list, or returns null if this list is empty.
+            peekLast() - Retrieves, but does not remove, the last element of this list, or returns null if this list is empty.
+            poll() - Retrieves and removes the head (first element) of this list.or returns null if this list is empty.
+            pollFirst() - Retrieves and removes the first element of this list, or returns null if this list is empty.
+            pollLast() - Retrieves and removes the last element of this list, or returns null if this list is empty.
+            getLast() - Returns the last element in this list.
+            addFirst() вставляє елемент на початок списку. 
+            addLast() - Appends the specified element to the end of this list.
+            offer() робить те саме, що add() і addLast() - він додає елемент в кінець списку. 
+            offerFirst(E e) - Inserts the specified element at the front of this list.
+            offerLast(E e) - Inserts the specified element at the end of this list.
+            remove() -  removes the head (first element) of this list.
+            E remove(int index) - Removes the element at the specified position in this list. Shifts any subsequent elements to the left (subtracts one from their indices). Returns the element that was removed from the list.
+            removeFirst() - Removes and returns the first element from this list.
+            removeLast() видаляє і повертає останній елемент списку.
+
+             *** like Queue ***
+            peek() - Retrieves, but does not remove, the head (first element) of this list.: він повертає null для порожнього списку.
+            element() - Retrieves, but does not remove, the head (first element) of this list: видають виняток NoSuchElementException для порожнього списку. 
+            poll() -  Retrieves and removes the head (first element) of this list.or null if this list is emptyor null if this list is empty
+            remove() - Retrieves and removes the head (first element) of this list.NoSuchElementException - if this list is empty
+            offer() робить те саме, що add() і addLast() - він додає елемент в кінець списку. 
+            removeFirstOccurrence() - Removes the first occurrence of the specified element in this list (when traversing the list from head to tail). If the list does not contain the element, it is unchanged.
+            Returns:
+            true if the list contained the specified element
+            removeLastOccurrence() - Removes the last occurrence of the specified element in this list (when traversing the list from head to tail). If the list does not contain the element, it is unchanged.
+            Returns:
+            true if the list contained the specified element
+
+
+            *** like Deque ***
+            getFirst () | element () ідентичні - вони повертають початок (перший елемент) списку без його видалення і видають виняток NoSuchElementException для порожнього списку. 
+            getLast() - Returns the last element in this list.
+            addFirst() вставляє елемент на початок списку. 
+            addLast() - Appends the specified element to the end of this list.
+            removeFirst() - Removes and returns the first element from this list.
+            removeLast() видаляє і повертає останній елемент списку.
+            offerFirst(E e) - Inserts the specified element at the front of this list.
+            offerLast(E e) - Inserts the specified element at the end of this list.
+            peekFirst() - Retrieves, but does not remove, the first element of this list, or returns null if this list is empty.
+            peekLast() - Retrieves, but does not remove, the last element of this list, or returns null if this list is empty.
+             pollFirst() - Retrieves and removes the first element of this list, or returns null if this list is empty.
+            pollLast() - Retrieves and removes the last element of this list, or returns null if this list is empty.
+
+            peek() - Retrieves, but does not remove, the head (first element) of this list.: він повертає null для порожнього списку.
+            element() - Retrieves, but does not remove, the head (first element) of this list: видають виняток NoSuchElementException для порожнього списку. 
+            poll() -  Retrieves and removes the head (first element) of this list.or null if this list is empty
+            remove() - Retrieves and removes the head (first element) of this list.NoSuchElementException - if this list is empty
+            offer() робить те саме, що add() і addLast() - він додає елемент в кінець списку. 
+            Iterator<E> descendingIterator() - Returns an iterator over the elements in this deque in reverse sequential order.
+            Returns: an iterator over the elements in this deque in reverse sequence
+
+
+
+            *** like Stack ***
+            peek() - Retrieves, but does not remove, the head (first element) of this list.: він повертає null для порожнього списку.
+            pop() - Pops an element from the stack represented by this list. In other words, removes and returns the first element of this list.
+            push(E e) - Pushes an element onto the stack represented by this list. In other words, inserts the element at the front of this list.
+
+
+
+                                                                 ***
+                                                                 Stack 
+                                                                 ***
+Stack часто називають контейнером, що працюють за принципом «першим увійшов, останнім вийшов» (LIFO). Тобто елемент, останнім занесений в стек, буде першим, отриманим при витяганні з стека.
+
+A more complete and consistent set of LIFO stack operations is provided by the Deque interface and its implementations, which should be used in preference to this class. 
+
+У класі LinkedList є методи, що безпосередньо реалізують функціональність стека, тому ви просто використовуєте LinkedList, не створюючи для стека новий клас. 
+
+        Methods:
+           E peek() - Looks at the object at the top of this stack without removing it from the stack.
+                     EmptyStackException - if this stack is empty.
+           E push(E item) - Pushes an item onto the top of this stack.
+           E pop() - Removes the object at the top of this stack and returns that object as the value of this function.
+                    EmptyStackException - if this stack is empty.
+           int search(Object o) - Returns the 1-based position where an object is on this stack. If the object o occurs as an item in this stack, this method returns the distance from the top of the stack of the occurrence nearest the top of the stack; the topmost item on the stack is considered to be at distance 1. The equals method is used to compare o to the items in this stack.
+
+                                                                 ***
+                                                                Interface Queue (Черга) 
+                                                                 ***
+
+A collection designed for holding elements prior to processing. 
+Besides basic Collection operations, queues provide additional insertion, extraction, and inspection operations.
+ Each of these methods exists in two forms: one throws an exception if the operation fails, the other returns a special value (either null or false, depending on the operation).
+The latter form of the insert operation is designed specifically for use with capacity-restricted Queue implementations; in most implementations, insert operations cannot fail.
+
+Queues typically, but do not necessarily, order elements in a FIFO (first-in-first-out) manner. 
+Among the exceptions are priority queues, which order elements according to a supplied comparator, or the elements' natural ordering, 
+and LIFO queues (or stacks) which order the elements LIFO (last-in-first-out).
+ Whatever the ordering used, the head of the queue is that element which would be removed by a call to remove() or poll(). 
+ In a FIFO queue, all new elements are inserted at the tail of the queue. Other kinds of queues may use different placement rules.
+ Every Queue implementation must specify its ordering properties.
+
+ Queue - FIFO - first in first out 
+
+Черга звичайно являє собою контейнер, що працює за принципом «першим увійшов, першим вийшов» (FIFO). 
+Черги часто застосовуються для реалізації надійної передачі об'єктів між різними областями програми.
+Клас LinkedList містить методи, які підтримують поведінку черги, і реалізує інтерфейс Queue, тому LinkedList може використовуватися в якості реалізації Queue. 
+У наступному прикладі LinkedList підвищується висхідним перетворенням до Queue:
+
+
+       Throws exception    Returns special value (null/false)
+Insert   add(e)                offer(e)
+Remove   remove()               poll()
+Examine  element()              peek()
+
+                                                                 ***
+                                                                Interface Deque extens Queue
+                                                                 ***
+
+A linear collection that supports element insertion and removal at both ends.
+The name deque is short for "double ended queue" and is usually pronounced "deck". 
+Most Deque implementations place no fixed limits on the number of elements they may contain, but this interface supports capacity-restricted deques as well as those with no fixed size limit.
+
+Summary of Deque methods
+
+                 First Element (Head)               Last Element (Tail)
+         Throws exception    Special value   Throws exception    Special value
+Insert    addFirst(e)         offerFirst(e)    addLast(e)          offerLast(e)
+Remove    removeFirst()       pollFirst()      removeLast()        pollLast()
+Examine   getFirst()          peekFirst()      getLast()           peekLast()
+
+When a deque is used as a queue, FIFO (First-In-First-Out) behavior results.
+
+Comparison of Queue and Deque methods
+
+Queue Method    Equivalent Deque Method
+add(e)          addLast(e)
+offer(e)        offerLast(e)
+remove()        removeFirst()
+poll()          pollFirst()
+element()       getFirst()
+peek()          peekFirst()
+
+Deques can also be used as LIFO (Last-In-First-Out) stacks. This interface should be used in preference to the legacy Stack class. When a deque is used as a stack, elements are pushed and popped from the beginning of the deque. Stack methods are precisely equivalent to Deque methods as indicated in the table below:
+
+Comparison of Stack and Deque methods
+
+Stack Method    Equivalent Deque Method
+push(e)          addFirst(e)
+pop()            removeFirst()
+peek()           peekFirst()                                                               
+
+
+                                                                 ***
+                                                                 Set (Множина) - швидкий пошук
+                                                                 ***
+
+A collection that contains no duplicate elements. More formally, sets contain no pair of elements e1 and e2 such that e1.equals(e2), and at most one null element. As implied by its name, this interface models the mathematical set abstraction.
+
+!!! Отже, найважливішою операцією Set є операція пошуку, тому на практиці звичайно вибирається реалізація HashSet, оптимізована для швидкого пошуку.
+
+У множинах (Set) кожне значення може зберігатися тільки в одному екземплярі. 
+Спроби додати новий екземпляр еквівалентного об'єкта блокуються. 
+Множини часто використовуються для перевірки приналежності, щоб ви могли легко перевірити, чи належить об'єкт заданій множині. 
+Отже, найважливішою операцією Set є операція пошуку, тому на практиці звичайно вибирається реалізація HashSet, оптимізована для швидкого пошуку.
+
+Якщо ви хочете, щоб результат був відсортований, скористайтесь TreeSet замість HashSet
+
+Однією з найбільш поширених операцій з множинами є перевірка приналежності методом contains()
+
+*** HashSet<E> ***
+
+This class implements the Set interface, backed by a hash table (actually a HashMap instance).
+
+This class offers constant time performance for the basic operations (add, remove, contains and size), assuming the hash function disperses the elements properly among the buckets. 
+Iterating over this set requires time proportional to the sum of the HashSet instance's size (the number of elements) plus the "capacity" of the backing HashMap instance (the number of buckets). Thus, it's very important not to set the initial capacity too high (or the load factor too low) if iteration performance is important.
+
+*** TreeSet<E> ***
+
+A NavigableSet implementation based on a TreeMap.
+
+The elements are ordered using their natural ordering, or by a Comparator provided at set creation time, depending on which constructor is used.
+
+This implementation provides guaranteed log(n) time cost for the basic operations (add, remove and contains).
+
+                                                                ***
+                                                                 Map
+                                                                ***
+
+An object that maps keys to values. A map cannot contain duplicate keys; each key can map to at most one value.
+
+                                                                ***
+                                                                HashTable
+                                                                ***
+
+!!!!!!!!!!! Thread-saved and doesn't allow null-keys and null-values
+This class implements a hash table, which maps keys to values. Any non-null object can be used as a key or as a value.
+To successfully store and retrieve objects from a hashtable, the objects used as keys must implement the hashCode method and the equals method.
+
+
+*** HashMap ***
+
+!!!!!!!!!!! Thread-unsaved and  allows null-keys and null-values
+
+Hash table based implementation of the Map interface. 
+
+This implementation provides all of the optional map operations, and permits null values and the null key. (The HashMap class is roughly equivalent to Hashtable, except that it is unsynchronized and permits nulls.)
+
+This implementation provides constant-time performance for the basic operations (get and put), assuming the hash function disperses the elements properly among the buckets. Iteration over collection views requires time proportional to the "capacity" of the HashMap instance (the number of buckets) plus its size (the number of key-value mappings). Thus, it's very important not to set the initial capacity too high (or the load factor too low) if iteration performance is important.
+
+*** TreeMap ***
+
+A Red-Black tree based NavigableMap implementation. The map is sorted according to the natural ordering of its keys, or by a Comparator provided at map creation time, depending on which constructor is used.
+
+This implementation provides guaranteed log(n) time cost for the containsKey, get, put and remove operations. Algorithms are adaptations of those in Cormen, Leiserson, and Rivest's Introduction to Algorithms.
+
+
+
+
+                                                                 ***
+                                                                 Bag (Мішок)
+                                                                 ***
+
+public class Bag<Item> implements Iterable<Item>
+Bag()
+створює порожній мішок
+void add(Item x)
+додає новий елемент в мішок
+int size()  
+кількість елементів в мішку
+Iterable<Item> iterator()
+ітератор по елементам
+Реалізація: Стек без pop або черга без dequeue
+public class Bag<Item> implements Iterable<Item>
+Bag()
+створює порожній мішок
+void add(Item x)
+додає новий елемент в мішок
+int size()  
+кількість елементів в мішку
+Iterable<Item> iterator()
+ітератор по елементам
+Реалізація: Стек без pop або черга без dequeue
+
+
+
+
+                                                               
+                
+Корисні методи:
+
+add(Object o);
+remove(Object o);
+remove(int i);
+indexOf(Object o);
+subList(int i, int j);
+contains(Object o);
+containsAll(List l);
+Collections.sort(List l);
+removeAll(List l);
+set(int I, Object o);
+addAll(int i, List l);
+
+                                                    *** 
+                                                    Map 
+                                                    ***
+
+Контейнери легко комбінуються один з одним, що дозволяє швидко створювати складні структури даних. 
+Наприклад, якщо нам буде потрібно зберегти інформацію про власників відразу декількох домашніх тварин, для цього буде достатньо створити контейнер Map <Person, List <Pet>>:
+
+                                            *** Ітератор (Iterator) ***
+
+Якщо ви хочете написати універсальний код, який не залежить від типу контейнера і може застосовуватися до будь-якого контейнера?
+
+Ітератор - це об'єкт, що забезпечує переміщення по послідовності об'єктів з вибором кожного об'єкта цієї послідовності, при цьому програмісту-клієнтові не треба знати або піклуватися про те що лежить в основі структури. 
+До того ж, ітератор зазвичай є так званим «легковажним» (light-weight) об'єктом: його створення має обходитися без помітних витрат ресурсів. 
+Через це ітератори часто мають обмеження, наприклад, Iterator в Java підтримує переміщення тільки в одному напрямку. 
+
+Можливості:
+            * Запитати у контейнера ітератор викликом методу iterator(). Отриманий ітератор готовий повернути початковий елемент послідовності при першому виклику свого методу next ().
+
+            * Отримати наступний елемент послідовності викликом методу next().
+
+            * Перевірити, чи залишилися ще об'єкти в послідовності (метод hasNext ()).
+
+            * Видалити з послідовності останній елемент, повернутий ітератором, методом remove().
+
+***
+Interface Iterable<T> - інтерфейс, що має методи:
+
+                        Iterator<T> iterator(); - Returns an iterator over elements of type T.
+
+Usage:
+
+1. Дозволяє скористатися циклом foreach:
+
+    for (String str : myStack) {
+        System.out.println(str + '\n');
+                                }
+! All the dirty work of creating the Iterator<String>, checking if it hasNext(), and calling str = getNext() is handled behind the scenes by the compiler:
+
+    Iterator<String> itr = myStack.iterator();
+    while (itr.hasNext()){
+            String s = itr.next();
+            System.out.println(s + '\n');
+                         }
+
+Interface Iterator<T> - інтерфейс, що має методи:
+            
+                        1. boolean hasNext();
+                        2. T next();
+                        3. void remove();
+
+An iterator over a collection. Iterator takes the place of Enumeration in the Java Collections Framework. Iterators differ from enumerations in two ways:
+Iterators allow the caller to remove elements from the underlying collection during the iteration with well-defined semantics.
+Method names have been improved.
+
+Interface Enumeration<E>
+
+NOTE: The functionality of this interface is duplicated by the Iterator interface. In addition, Iterator adds an optional remove operation, and has shorter method names. New implementations should consider using Iterator in preference to Enumeration.
+
+1. boolean hasMoreElements() - Tests if this enumeration contains more elements.
+
+2. E nextElement() - Returns the next element of this enumeration if this enumeration object has at least one more element to provide.
+
+                                                        *** ListIterator ***
+
+ListIterator – потужніший різновид ітератора (Iterator), що підтримується лише класами List. 
+Якщо Iterator підтримує переміщення тільки вперед, ListIterator є двостороннім. 
+Крім того, він може видавати індекси наступного і попереднього елементів по відношенню до поточної позиції ітератора в списку і замінювати останній відвіданий елемент методом set(). 
+Виклик listIterator() повертає ListIterator, який вказує на початок List, а для створення ітератора ListIterator, спочатку встановленого на елемент з індексом n, використовується виклик listIterator(n). 
+
+                                                        *** Comparable vs Comparator ***
+
+Interface Comparable<T> and Interface Comparator<T> - упорядковують елементи:
+
+            * Interface Comparable<T> - забезпечує наявність ОДНОГО виду сортування
+            * Interface Comparator<T> - забезпечує наявність ДЕКІЛЬКОХ видів сортування
+
+                                                        ***  Interface Comparable<T> ***
+
+ * Interface Comparable<T> - забезпечує наявність ОДНОГО виду сортування
+
+ This interface imposes a total ordering on the objects of each class that implements it. 
+ This ordering is referred to as the class's natural ordering, 
+ and the class's compareTo method is referred to as its natural comparison method.
+
+Lists (and arrays) of objects that implement this interface can be sorted automatically by Collections.sort (and Arrays.sort). 
+Objects that implement this interface can be used as keys in a sorted map or as elements in a sorted set, without the need to specify a comparator.
+
+int compareTo(T o) - Compares this object with the specified object for order.
+
+Returns:
+a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
+
+public interface Comparable<Type>{
+    public int compareTo(Type item);
+}
+
+int res = x.compareTo(y) =>
+                            res > 0 ( res == 1 ) => x > y
+                            res == 0 => x == y
+                            res < 0 ( res == -1 ) => x < y
+
+Example:
+
+public class Students implements Comparable {
+
+    protected String name;
+    protected int age;
+
+    public Students(String name, int age) {
+
+        this.name = name;
+        this.age = age;
+
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    
+    public int getAge() {
+        return age;
+    }
+
+
+    @Override
+    public String toString() {
+        return name + " " + age;
+    }
+
+    public int compareTo(Object obj) {
+        Students people = (Students) obj;
+
+        int result = name.compareTo(people.name);
+        if (result != 0) {
+            return result;
+        }
+
+        result = age - people.age;
+        if (result != 0) {
+            return (int) result / Math.abs(result);
+        }
+        return 0;
+    }
+
+}
+         
+Usage:
+
+Students [] stds = new Students[4];
+Integer [] keys = new Integer[4];
+
+Arrays.sort(stds);
+
+MergeSort.sort(stds,keys);
+InsertionSort.sort(stds, keys);
+SelectionSort.sort(stds,keys);
+ShellSort.sort(stds,keys);      
+                                
+
+                                                                ***  Interface Comparator<T> ***
+
+* Interface Comparator<T> - забезпечує наявність ДЕКІЛЬКОХ видів сортування
+
+  Comparator<T> у своєму методі сортування compare()  використовує compareTo()
+
+  int compare(T o1, T o2) - Compares its two arguments for order.
+
+A comparison function, which imposes (накладати) a total ordering on some collection of objects. 
+Comparators can be passed to a sort method (such as Collections.sort or Arrays.sort) to allow precise control over the sort order. Comparators can also be used to control the order of certain data structures (such as sorted sets or sorted maps), 
+or to provide an ordering for collections of objects that don't have a natural ordering.
+
+Unlike Comparable, a comparator may optionally permit comparison of null arguments, while maintaining the requirements for an equivalence relation.
+
+public interface Comparator<Type>{
+    public int compare (Type x, Type y);
+}
+
+Example:
+--------
+
+        public class Students implements Comparable<Students>{
+
+            public int compareTo(Students std){
+                //realisation
+            }
+
+            public static final Comparator<Students> SORTED_BY_NAME = new SortedByName();
+            public static final Comparator<Students> SORTED_BY_AGE = new SortedByAge);
+
+            private static class SortedByName implements Comparator<Students>{
+
+                public int compare (Students std1, Students std2){
+                return std1.getName().compareTo(std2.getName());
+
+                }
+            }
+
+            private static class SortedByAge implements Comparator<Students>{
+
+                public int compare (Students std1, Students std2){
+                return std1.getAge().compareTo(std2.getAge());
+
+                }
+            }
+        }
+
+Usage:
+
+Students [] stds = new Students[4];
+
+Arrays.sort(stds);
+Arrays.sort(stds, Students.SORTED_BY_NAME);
+Arrays.sort(stds, Students.SORTED_BY_AGE);
+Collections.sort(stds, Students.SORTED_BY_NAME);
+Collections.sort(stds, Students.SORTED_BY_AGE);       
+
+EXAMPLE:
+
+public class Students implements Comparable<Students> {
+    private String name;
+    private Integer age;
+
+    public Students(String name, Integer age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public static final Comparator<Students> BY_NAME = new SortedByName();
+
+    public static final Comparator<Students> BY_AGE = new SortedByAge();
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    /*
+     * public void setAge(Integer age) { this.age = age; }
+     */
+
+    public String toString() {
+        return name + " " + age + "\n";
+    }
+
+    private static class SortedByName implements Comparator<Students> {
+
+        public int compare(Students st1, Students st2) {
+            return st1.name.compareTo(st2.name);
+
+        }
+    }
+
+    private static class SortedByAge implements Comparator<Students> {
+
+        public int compare(Students st1, Students st2) {
+
+            return st1.age.compareTo(st2.age);
+
+        }
+    }
+
+    public int compareTo(Students st) {
+        Students people = st;
+
+        int result = name.compareTo(people.name);
+        if (result != 0) {
+            return result;
+        }
+
+        result = age - people.age;
+        if (result != 0) {
+            return (int) result / Math.abs(result);
+        }
+        return 0;
+    }
+    
+}
+
+Students [] stds = new Students[4];
+Integer [] keys = new Integer[4];
+
+// Use Comparable
+Arrays.sort(stds);
+
+//Use Comparator
+Arrays.sort(stds, Students.SORTED_BY_NAME);
+Arrays.sort(stds, Students.SORTED_BY_AGE);
+Collections.sort(stds, Students.SORTED_BY_NAME);
+Collections.sort(stds, Students.SORTED_BY_AGE);       
+
+ MergeSort.sort(stds, keys, Students.BY_AGE);
+ InsertionSort.sort(stds, keys, Students.BY_AGE);
+ SelectionSort.sort(stds, keys, Students.BY_AGE);
+ ShellSort.sort(stds, keys, Students.BY_AGE);
+
+ MergeSort.sort(stds, keys, Students.BY_NAME);
+ InsertionSort.sort(stds, keys, Students.BY_NAME);
+ SelectionSort.sort(stds, keys, Students.BY_NAME);
+ ShellSort.sort(stds, keys, Students.BY_NAME);
+
+    ***
+
+ Структури даних/ Контейнери/колекції (data structures):
+
+ Array
+ List
+ Bag
+ Stack
+ Queue
+ PriorityQueue - видаляэмо найбільший/найменший елемент
+ BT(Binary Search Tree) - порожнє, або вузол з лінками на праве і ліве бінарне дерево
+                        - это структура данных, которая имеет корень и определенное количество детей, которые тоже могут иметь своих детей
+ Повне бінарне дерево -  збалансоване дерево, окрім нижнього рівня
+ Двійкова купа (англ. binary heap) — це структура даних, що є масивом, який можна розглядати як майже повне бінарне дерево. Кожен вузол цього дерева відповідає певному елементу масива. На всіх рівнях, крім, можливо останнього, дерево повністю заповнене (заповнений рівень — такий, що містить максимально можливу кількість вузлів). Останній рівень заповнюється послідовно зліва направо до тих пір, доки в масиві не закінчатся елементи
+ Бінарна купа – представлення впорядкованої-купи повного бінарного дерева з використанням масиву.
+ Бінарне дерево впорядкована купа:
+ ключі в вузлах
+ ключ батька має бути більшим за ключ сина
+ HeapSort:
+            Створюємо max-купу з усіма N елементами
+            Повторюємо видалення максимального елемента поки не отримаємо відсортований масив
+
+
+ Deque
+ Set
+ Map
+
+ BST
+ BBST (збалансовані)
+ SPT (shortest-paths tree)
+ hashtable - спосіб збереження даних
+
+    ***
+
+ Алгоритми сортування:
+ 
+ bubble sort
+ selection sort
+ insertion sort
+ shell sort
+ merge sort
+ quick sort
+ !!!heapsort (опитимальний і по часу і по розміру):
+            Створюємо max-купу з усіма N елементами
+            Повторюємо видалення максимального елемента поки не отримаємо відсортований масив
+ топологічне сортування - пошук працює на орієнтованих ациклічних графах 
+
+
+ Алгоритми пошуку:
+ 
+ BST (binary search tree /  ordered or sorted binary tree) - це двійкове дерево, для якого виконуються наступні умови:
+                    обидва піддерева – ліве і праве є двійковими деревами пошуку
+                    у всіх вузлів лівого піддерева довільного вузла Х значення ключів даних менше чим значення ключа даних самого вузла Х
+                    у всіх вузлів правого піддерева того ж вузла Х значення ключів даних не менше чим значення ключа даних вузла Х
+
+Збалансовані дерева пошуку:
+                    2-3  BST
+                    red-black BST
+                    B-trees
+ hash table
+
+ Графи:
+
+ Неорієнтований граф ( undirected graph ):
+                         DFS ( Depth-first search )
+                         BFS (Breadth-first search)
+ Minimum spanning tree ( Мінімальне остове дерево) для неорієнтованого зваженого графа:
+                         На вхід подається:
+                                            неорієнтований граф G з ребрами, що мають цілі ваги
+                                            остове дерево Т графа G є підграфом, що з’єднаний і ациклічний
+                                            Ціль: знайти мінімальне за вагою остове дерево
+                        Остове дерево - ациклічний зєднаний підграф графа
+    Алгоритми знаходження (МОД):
+                        Жадібний алгоритм (Quick-find)
+                        Алгоритм Крускала (Kruskal)
+                        !!! Алгоритм Прима (Prim)
+
+Ейлеровий цикл  - цикл, що проходить через усі ребра неорієнтованого звязаного графа лише 1 раз.
+Ейлеровим циклом у зв’язаному графі G називають цикл, який містить усі ребра графа.
+Ейлеровим шляхом – ланцюг, що містить усі ребра графу.
+Звязаний неорієнтований граф має ейлеровий цикл, коли степені всіх його вершин парні
+
+Якщо граф має простий цикл, який містить усі вершини графу (по
+одному разу), то такий цикл називається гамільтоновим циклом, а граф називається
+гамільтоновим. Гамільтонів маршрут − це маршрут, який містить усі вершини графа по
+одному разу.
+Якщо для кожної вершини v зв’язаного простого графа з n ≥ 3
+вершинами виконується нерівність d(v) ≥ n/2, то цей граф має гамільтонів цикл. 
+
+ Орієнтований граф ( directed graph ):
+                         DFS ( Depth-first search )
+                         BFS (Breadth-first search)
+                         топологічне сортування - пошук працює на орієнтованих ациклічних графах =>
+                          => 
+                          Вершини v і w є сильно зв’язаними (СЗ) якщо існує направлений шлях з v в w і з w в v.
+                          Сильно зв’язаним компонентом називають максимальну підмножину сильно зв’язаних вершин
+                          =>
+                          Алгоритм Косараджу  - пошук сильно звязних компонентів за мін час:
+                                                В алгоритмі використовується той факт, що транспонований орграф (той самий граф з оберненими напрямками ребер) має ті самі сильно зв’язані компоненти, що й початковий граф.
+                                                    Основна ідея:
+                                                    Обрахувати топологічну чергу в трансопонованому орграфі
+                                                    Запустити DFS використовуючи топологічну чергу
+
+
+
+
+SPT (shortest-paths tree) (деревом найкоротших шляхів ) для орієнтованого зваженого графа:
+Визначення: для заданого ( орієнтованого зваженого графа )графа з зваженими ребрами і заданої вершини s деревом найкоротших шляхів для джерела s є підграф, що містить вершину s і всі досяжні з неї вершини, що утворюють орієнтоване дерево, з коренем в s , таке, що шлях в цьому дереві є найкоротшим шляхом в орграфі.
+
+    Алгоритм Дейкстри (Edsger Dijkstra)
+
+31.3. Задача комівояжера (комівояжер — бродячий торговець)
+Розглянемо наступну задачу, відому як задача комівояжера. Маємо p міст, відстані
+між якими відомі. Комівояжер повинен відвідати всі p міст по одному разу, повернувшись в
+те, з якого почав. Потрібно знайти такий маршрут руху, при якому сумарна пройдена відстань
+буде мінімальною.
+Очевидно, що задача комівояжера – це задача пошуку найкоротшого гамільтонового
+циклу в повному зваженому графі. Можна припустити наступну просту схему розв’язку
+задачі комівояжера: згенерувати усі p! можливих перестановок вершин повного графа,
+підрахувати для кожної перестановки довжину маршруту і обрати з них найкоротший.
+Очевидно, таке обчислення потребує не менше О(p!) кроків.
+Як відомо, p! – швидко зростаюча функція. Таким чином, розв’язок задачі комівояжера
+описаним методом повного перебору виявляється практично неможливим навіть для
+порівняно невеликих p. Більш того, відомо, що задача комівояжера належить до числа так
+званих NP-повних задач. 
+
+Прості методи розв'язання задачі комівояжера: повний лексичний перебір, жадібні алгоритми (метод найближчого сусіда), метод включення найближчого міста, метод найдешевшого включення, метод мінімального кістяка дерева. На практиці застосовують різні модифікації ефективніших методів: метод гілок і меж і метод генетичних алгоритмів, а так само алгоритм мурашиної колонії.
+
+Всі ефективні (такі, що скорочують повний перебір) методи розв'язання задачі комівояжера — евристичні
+У більшості евристичних методів знаходиться не найефективніший маршрут, а наближений розв'язок. 
+Користуються популярністю так звані any-time алгоритми, тобто алгоритми, що поступово покращують деякий поточний наближений розв'язок.
+
+В інформатиці евристичний алгоритм, або просто евристика — це алгоритм, спроможний видати прийнятне рішення проблеми серед багатьох рішень, але неспроможний гарантувати, що це рішення буде найкращим. Отже, такі алгоритми є приблизними і неточними. Зазвичай такі алгоритми знаходять рішення, близьке до найкращого і роблять це швидко. Іноді такий алгоритм може бути точним, тобто він знаходить дійсно найкраще рішення, але він все одно буде називатися евристичним доти, доки не буде доведено, що рішення дійсно найкраще. Один з найвідоміших — жадібний алгоритм, для того, щоб бути простим і швидким, цей алгоритм ігнорує деякі вимоги задачі.
+
+Дві фундаментальні цілі в інформатиці — знаходження алгоритмів з імовірно найкращим часом виконання та з хорошою або оптимальною якістю. Евристичний алгоритм відмовляється від однієї або обох цих цілей; наприклад, він зазвичай знаходить дуже хороше рішення, але немає доказів, що рішення насправді не є поганим; або працює досить швидко, але не має гарантії, що він завжди видасть рішення.
+
+Декілька евристичних методів використовуються антивірусним ПЗ для виявлення вірусів та іншого шкідливого ПЗ.
+
+ Існує клас евристичних стратегій, названих метаалгоритмами, котрі часто використовують — наприклад, випадковий пошук. Такі алгоритми можуть бути застосовані до широкого кола завдань, при цьому хороші характеристики не гарантуються.
+
+Задача комівояжера — NP-повна. Часто на ній проводять випробування нових підходів до евристичного скорочення повного перебору.
+
+NP-повна задача (англ. NP-complete) — в теорії алгоритмів та теорії складності це задача, що належить до класу NP та всі задачі з класу NP можна звести до неї за поліноміальний час.
+
+Клас складності NP (англ. Complexity class NP) — клас складності, до якого належать задачі, що можна розв'язати недетермінованими алгоритмами за поліноміальний час; тобто, недетермінованими алгоритмами в яких завжди існує шлях успішного обчислення за поліноміальний час відносно довжини вхідного рядка;
+Мова L належить до класу NP (недетермінованих поліноміальних) якщо вона розпізнається недетермінованою машиною Тюрінга {\displaystyle M} M з поліноміальною часовою складністю T(n)
+
+Алгоритмом з поліноміальним часом називається такий алгоритм, час роботи якого (тобто, кількість елементарних двійкових операцій, необхідних для його виконання на детермінованій машині Тюринга) на вхідному рядку довжиною  l обмежено згори деяким поліномом P(l)
+
+Задачі, що можна розв'язати алгоритмом з поліноміальним часом належать до класу задач складності P.
+
+Поліном:
+
+c0 + c1x + c2x^2 + ... + cnx^n,
+де ci - сталі коефіцієнти (константи), x - змінна

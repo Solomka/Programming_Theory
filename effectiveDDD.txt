@@ -1,0 +1,176 @@
+***
+Transaction
+***
+
+A transaction is a unit of work that is performed against a database. Transactions are units or sequences of work accomplished in a logical order, whether in a manual fashion by a user or automatically by some sort of a database program.
+
+A Unit of Work keeps track of everything you do during a business transaction that can affect the database. When you're done, it figures out everything that needs to be done to alter the database as a result of your work.
+
+Practically, you will club many SQL queries into a group and you will execute all of them together as a part of a transaction.
+
+Properties of Transactions:
+Transactions have the following four standard properties, usually referred to by the acronym ACID:
+
+Atomicity: ensures that all operations within the work unit are completed successfully; otherwise, the transaction is aborted at the point of failure, and previous operations are rolled back to their former state.
+
+Consistency: ensures that the database properly changes states upon a successfully committed transaction.
+
+Isolation: enables transactions to operate independently of and transparent to each other.
+
+Durability: ensures that the result or effect of a committed transaction persists in case of a system failure.
+
+
+@Transactional
+
+
+
+I think transactions belong on the Service layer. It's the one that knows about units of work and use cases. It's the right answer if you have several DAOs injected into a Service that need to work together in a single transaction.
+
+
+
+Transactional Annotations should be placed around all operations that are inseparable.
+
+For example, your call is "change password". That consists of two operations
+
+Change the password.
+Audit the change.
+Email the client that the password has changed.
+So in the above, if the audit fails, then should the password change also fail? If so, then the transaction should be around 1 and 2 (so at the service layer).
+
+
+
+------------------------------------------------------------------------------------
+Part I has focused on the design of a number of small aggregates and their internals           
+------------------------------------------------------------------------------------
+
+
+                 ***
+ *** Sinagke transaction and Unit Of Work ***
+                 ***
+
+When employing a typical persistence mechanism we use a single transaction to manage consistency. 
+The transaction may be handled by a unit of work.
+                
+                ***
+     Modeling a single aggregate
+                ***
+
+ProductAR class
+
+public class Product ... {
+ ...
+ public BacklogItem planBacklogItem(
+ String aSummary, String aCategory,
+ BacklogItemType aType, StoryPoints aStoryPoints) {
+ ...
+ }
+ public Release scheduleRelease(
+ String aName, String aDescription,
+ Date aBegins, Date anEnds) {
+ ...
+ }
+ public Sprint scheduleSprint(
+ String aName, String aGoals,
+ Date aBegins, Date anEnds) {
+ ...
+ }
+ ...
+}
+
+These redesigned methods have a [CQS] query contract,
+and act as factories. That is, they each respectively create a
+new aggregate instance and return a reference to it. 
+
+Now when a client wants to plan a backlog item, the transactional
+application service must do the following:
+
+
+public class ProductBacklogItemService ... {
+ ...
+ @Transactional
+
+//add new project task
+ public void planProductBacklogItem( String aTenantId, String aProductId, String aSummary, String aCategory, String aBacklogItemType, String aStoryPoints) {
+
+//get project from DB by its id
+ Product product =
+ productRepository.productOfId(
+ new TenantId(aTenantId),
+ new ProductId(aProductId));
+
+//add task to project's tasks through unique Produvt interface
+ BacklogItem plannedBacklogItem =
+ product.planBacklogItem( aSummary, aCategory, BacklogItemType.valueOf(aBacklogItemType), StoryPoints.valueOf(aStoryPoints));
+
+ backlogItemRepository.add(plannedBacklogItem);
+ }
+ ...
+}
+
+1.  Model True Invariants In Consistency Boundaries
+
+An invariant is a business rule that must always be consistent.
+
+When discussing invariants (  business rule that must always be consistent ), we are referring to transactional consistency. 
+
+Thus, aggregate is synonymous with transactional consistency boundary
+
+When employing a typical persistence mechanism we use a single transaction to manage consistency. 
+The transaction may be handled by a unit of work.
+
+ When the transaction commits, everything inside one boundary must be consistent.
+
+ A properly designed aggregate is one that can be modified in any way required by the business with its invariants completely consistent within a single transaction.
+
+ And a properly designed bounded context modifies only one aggregate instance per transaction in all cases.
+ What is more, we cannot correctly reason on aggregate design without applying transactional analysis.
+
+Ми виконали транзакцію і всі композити рута є узгодженими.
+
+2.  Design Small Aggregates
+
+If we are going to design small aggregates, what does “small” mean? 
+
+The correct minimum is the ones necessary, and no more.
+Which ones are necessary? 
+The simple answer is: those that must be consistent with others, even if domain experts don't specify them as rules.
+
+What if you think you should model a contained part as an entity?
+First ask whether that part must itself change over time, or whether it can be completely replaced when change is necessary. 
+If instances can be completely replaced, it points to the use of a value object rather than an entity.
+
+Favoring value types as aggregate parts doesn't
+mean the aggregate is immutable since the root entity itself
+mutates when one of its value-typed properties is replaced.
+
+There are important advantages to limiting internal parts to values. 
+
+Value objects are smaller and safer to use (fewer bugs). 
+Due to immutability it is easier for unit tests to prove their correctness. 
+
+A common issue that arises is a particular use case that calls for the modification of multiple aggregate instances. 
+
+The new use case would specify eventual consistency and the acceptable update delay.
+
+------------------------------------------------------------------------------------ 
+Part II of this essay covers how aggregates reference other aggregates as well as eventual consistency
+------------------------------------------------------------------------------------
+
+Aggregation root - a unit of compositions that has transactional consistency.
+
+
+
+------------------------------------
+
+One of the key points about @Transactional is that there are two separate concepts to consider, each with it's own scope and life cycle:
+
+the persistence context
+the database transaction
+
+The database transaction happens inside the scope of a persistence context.
+
+The persistence context is in JPA the EntityManager, implemented internally using an Hibernate Session (when using Hibernate as the persistence provider).
+
+!!!!!!!!!!!!!!!!!!!!!
+The database transaction happens inside the scope of an Hibernate Session.
+One Hibernate Session (persistence context) can be used across several database transactions, and it actually often is.

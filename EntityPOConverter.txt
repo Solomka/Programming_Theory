@@ -1,0 +1,80 @@
+OrderPO
+ 
+    private UUID id; 
+    private DateTime creationDate;
+    private DateTime fulfilmentDate;
+    private OrderStatus status;
+    private CustomerPO customer;
+    private ShipmentPO shipment;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItemPO> orderItems;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.REFRESH)
+    private List<InvoicePO> invoices;
+
+OrderSaveDTO
+
+    private final CustomerID customer;
+    private final Shipment shipment;
+    private final Collection<OrderItem> orderItems;
+    private final OrderStatus status;
+    private final DateTime creationDate;
+    private final DateTime fulfilmentDate;
+
+    -----------------------------------------
+
+    ShipmentPO
+
+    private UUID id;
+    private String deliveryService;  
+    private BigDecimal totalSum;
+    private DateTime deliveryDate;  
+    private ShipmentStatus status;  
+    private AddressPO address;
+
+    Shipment
+
+    private final String deliveryService;
+    private final Price price;
+    private final ShipmentDetails shipmentDetails;
+    private final DateTime deliveryDate;
+    private final ShipmentStatus status;
+
+    --------------------------------------------
+
+    AddressPO
+
+
+    private UUID id;
+    private Address address;
+    private FullName fullName;   
+    private String phone;   
+    private CustomerPO customer; 
+    private List<ShipmentPO> shipments;
+
+    ShipmentDetails
+
+    private final Address address;
+    private final FullName fullName;
+    private final String phone;
+
+    Address
+
+    @Column(name = "country", nullable = false, length = 50)
+    private String country;
+
+    @Column(name = "state", length = 50)
+    private String state;
+
+    @Column(name = "region", length = 50)
+    private String region;
+
+    @Column(name = "city", nullable = false, length = 50)
+    private String city;
+
+    @Column(name = "street", nullable = false, length = 50)
+    private String street;
+
+    @Column(name = "index", nullable = false, length = 8)
+    private String index;    

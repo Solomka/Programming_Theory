@@ -1,0 +1,26 @@
+1. IRepository - repository interface that will be implements by all AR repositories (OrderRepository)
+2. BasicFilter - Base class for repository filters that can be extended to suit your needs (OrderFilter)
+3. IFilter<F> - This is base filter interface for repository filter
+                 /**
+                 * Converts filter into repository-specific filter
+                 *
+                 * @return filter representation
+                 */
+                @NotNull
+                F toFilter();
+
+4.  interface SomeFilter extends IFilter<Predicate>
+
+ static class ChargeIdHibernate implements SomeFilter
+
+ -------------------------------
+
+ Service:
+
+UserFilter extends     IExposedFilter
+           implements
+
+////////////////////////////////////////////////////////////
+Hibernate Criteria
+///////////////////////////////////////////////////////////
+

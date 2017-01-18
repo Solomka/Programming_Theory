@@ -1,0 +1,205 @@
+*** внутрійшній клас (Inner class) ***
+public class Outer{
+    
+    //внутрійшній клас (Inner class)
+    class Inner {
+
+    }
+
+    private class InnerPrivate {
+
+    }
+    //вкладений клас (Nested class) (статичний внутрішній клас)
+    static class {
+
+    }
+
+    public static void main (String [] args){
+
+    Outer outer = new Outer;
+    // not allowed `couse class InnerPrivate is private
+    Outer.InnerPrivate iP = outer.new InnerPrivate();
+    }
+}
+
+Внутрішній клас:
+- може бути визначений всередині зовнішнього класу
+- може бути визначений всередині методу (локальні класи)
+- може бути визначений всередині блоку (області дії, наприклад if), який знаходться всережині методу
+- доступ до ВСІХ полів і методів зовнішнього класу
+
+Безіменні внутрішні класи:
+
+Внутрішній клас може бути визначений як:
+- безіменний клас, що реалізує інтерфес
+- безіменний клас, який розширює клас, у якого нема контсруктора за замовчуванням
+- безіменний клас, що виконує ініціалізацію полів
+- безіменний клас, що виконує конструювання посередництвом ініціалізації екземпляра (безіменні внутрішні класи не можуть мати іменовані конструктори, бо сам клас не має імені)
+
+I
+
+public class Outer {
+    
+    public ParentClass method( int x){
+//безіменний клас, що виконує конструювання посередництвом ініціалізації екземпляра (безіменні внутрішні класи не можуть мати конструктори)
+//створюємо обєкт безіменного класу, що наслідується від класу ParentClass
+    return new ParentClass(x){
+              public int value(){ return i; }
+
+    }; // ; - вказує не на кінець тіла класу (як в С++), а на кінець виразу, в якому знаходиться внутрішній клас
+
+    }
+
+}
+
+II
+
+public class Outer {
+    
+    public ParentClass method( final int x, final int xx){
+//безіменний клас, що виконує конструювання посередництвом ініціалізації екземпляра (безіменні внутрішні класи не можуть мати конструктори)
+//створюємо обєкт безіменного класу, що наслідується від класу ParentClass
+    return new ParentClass(){
+                private int a;
+                //створення конструктора для безіменного внутрішнього класу
+                //ініціалізація екземпляра для створення безіменного внутрішнього класу
+                //ініціалізатор екземпляра фактично вважається конструктором безіменного внутрішнього класу
+                {
+                a=xx;
+                System.out.println("Anonymous class pseudo - constructor");
+                }
+                private int i = x;
+                public int value(){ return i; }
+
+    }; // ; - вказує не на кінець тіла класу (як в С++), а на кінець виразу, в якому знаходиться внутрішній клас
+
+    }
+
+}
+
+Можливотсі безіменних внутрішніх класів обмежені у порівнянні із звичайним наслідуванням:
+    - безіменний клас може обо реалізовувати інтерфейс, або розширювати клас
+    -  безіменний клас може реалізовувати лише один інтерфейс
+
+
+*** вкладений клас (Nested class) (статичний внутрішній клас) ***
+
+! Якщо звязок між обєктом внутрішнього класу та обєктом зовнішнього класу непотрідний
+
+! Поля і методи звичайного внутрішнього класу визначаються тільки на рівні зовнішнього класу, тому вони не можуть містити статичні поля, методи і класи. Вкладені класи (Статичні внутрішні класи таких обмежень не мають)
+
+Значення:
+- для створення обєкта внутрішнього статичного класу не потрібний обєкт зовнішнього класу
+- з обєкту вкладеного класу не можна звертатися до нестатичних членів зовнішнього класу
+
+
+
+***
+Java private constructor
+***
+
+Private Constructors can be defnied in the Java for the following reasons
+
+1.To have control on the instantiation of the Java objects, it wont allow you to create an instance of an object.
+2.It wont allow the class to be Subclassed
+3.This has a special advantage when implementing the singleton Pattern, Private contstructors are used for it and have a control on the creating the instance for the whole application.
+4.when you want to have a class with all constants defined and Does not require its instance any more, then we declare that class as a private constructor.
+
+there are three uses of private constructors:
+
+1. to prevent instantiation outside of the object, in the following cases:
+    singleton
+    factory method
+    static-methods-only (utility) class
+    constants-only class
+2. to prevent sublcassing (extending). If you make only a private constructor, no class can extend your class, because it can't call the super() constructor. This is some kind of a synonym for final
+3. overloaded constructors - as a result of overloading methods and constructors, some may be private and some public. Especially in case when there is a non-public class that you use in your constructors, you may create a public constructor that creates an instance of that class and then passes it to a private constructor.
+
+Для чого потрібні внутрішні класи:
+    Зазвичай внутрішній клас наслідує певний клас або реалізує інтерфейс.
+    А код внутрішнього класу маніпулює обєктом зовнішнього класу
+    Внутрішній клас - вікно у зовнішній клас
+    ! Кожний внутрішній клас може незалежно наслідувати конкретну реалізацію. Таким чином внутрішній клас необмежений при наслідуванні в ситуаціях, де зовнішній лкас вже наслідує реалізацію:
+        * внутрішні класи фактично забезпечують "множинне наслідування реалізації" - наслідування від більше, аніж одного абстрактного чи реального класу:
+            * звичайний клас може реалізовувати декілька інтерфейсів (множинне наслідування реалізацій) 
+            * ЛИШЕ ВНУТРІШНІЙ КЛАС може наслідувати декілька реальних чи абстрактних класів (множинне наслідування реалізацій) 
+
+class A {}
+abstract class B {}
+
+class D extends A {
+    B makeB () {    return new B(){};   }
+}
+
+*** Замикання (closure) і зворотні виклики (callback) ***
+
+Замикання(closure) - обєкт, що викликається і який зберігає ін-фу про контекст, в якому він створений
+Внутрішній клас - це обєктно-орієнотване замикання.
+
+Механізм зворотнього виклику (callback) - деякому обєкту передається інформація, яка дозволяє йому потім звернутися з викликом до обєкту, який спричинив початковий виклик. (замикання, що представлене внутрішнім класом)
+
+***
+
+Каркас застосунку (application framework) - це клас чи набір класів, розроблений для розвязку певного кола задач.
+При роботі з каркасами застосунку зазвичай використовується наслідування від одного чи декільеох класів з перевизначенням деяких методів. Код перевизначених методів адаптує типові рішення до потреб вашого застосунку
+
+Система керування по подіях (event-driven system) (control framework)
+
+*** локальний внутрішній клас vs безіменний внутрішній клас ***
+
+Локальник клас:
+- коли потрібен конструктор/перевантажений конструктор
+(безіменні внутрішні класи допускають лише ініціалізацію екземпляром)
+-коли потрібно більше одного обєкта класу
+
+*** Enums ***
+
+public final class Quark{
+////each constant implicity calls a constructor :
+    public static final UP,
+    public static final DOWN
+}
+
+  public enum Lepton {
+    //each constant implicity calls a constructor :
+    ELECTRON(-1, 1.0E-31),
+    NEUTRINO(0, 0.0);
+    
+    /* 
+    * This constructor is private.
+    * Legal to declare a non-private constructor, but not legal
+    * to use such a constructor outside the enum.
+    * Can never use "new" with any enum, even inside the enum 
+    * class itself.
+    */
+    private Lepton(int aCharge, double aMass){
+      //cannot call super ctor here
+      //calls to "this" ctors allowed
+      fCharge = aCharge;
+      fMass = aMass;
+    }
+    final int getCharge() {
+      return fCharge;
+    }
+    final double getMass() {
+      return fMass;
+    }
+    private final int fCharge;
+    private final double fMass;
+  }
+
+//parsing text into an enum constant :
+static <T extends Enum<T>>T   valueOf(Class<T> enumType, String name)
+    Lepton lepton = Enum.valueOf(Lepton.class, "ELECTRON");
+ //More compact style for parsing text:
+    Lepton thirdLepton = Lepton.valueOf("NEUTRINO");
+
+/**
+  * The valueOf method uses name(), not toString(). There is no need
+  * to synchronize valueOf with toString.
+  */
+  private static void exerEnumToStringAndValueOf(){
+    Direction dir = Direction.valueOf("EAST"); //successful
+    log("Direction toString : " + dir);
+    dir = Direction.valueOf("Direction: EAST"); //fails
+  }

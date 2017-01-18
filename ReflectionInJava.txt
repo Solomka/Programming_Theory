@@ -1,0 +1,190 @@
+***
+JAVA ЯК ПЛАТФОРМА РОЗПОДІЛЕНОГО ПРОГРАМУВАННЯ
+***
+Як певна основа для простих розподілених, зокрема веб-застосувань розглядається трирівнева клієнт-серверна архітектура, на основі якої побудована значна частина таких застосувань.
+
+Архітектура “клієнт-сервер”:
+
+набір серверів, які надають інформацію або інші послуги програмам, які звертаються до них;
+набір клієнтів, які використовують сервіси, що надаються серверами;
+мережа, яка забезпечує взаємодію між клієнтами та серверами.
+
+Логічно можна виокремити три рівні операцій:
+
+рівень представлення даних, який по суті являє собою інтерфейс користувача і відповідає за представлення даних користувачеві і введення від нього керуючих команд;
+прикладний рівень (бізнес-логіка), який реалізує основну логіку застосування і на якому здійснюється необхідна обробка інформації;
+рівень управління даними, який забезпечує зберігання даних та доступ до них.
+
+*** 
+Браузер - Веб-сервер (сервер застосувань) - Сервер даних - Дані
+***
+
+Представлення: HTML (чистий Веб); desktop-застосування, фреймворки (JSF, Spring MVC).
+Прикладний рівень: може бути реалізований різним чином.
+Дані: .файли, потоки введення-виведення, механізм серіалізації, бази даних (JDBC, Hibernate, JPA), XML
+Мережна взаємодія: стандарнтні протоколи, сокети, RMI
+
+***
+Серіалізація
+**
+1 байт - 8 бітів
+Серіалізація об’єкта – це його упаковка в байтовий потік, наприклад, збереження на диску.
+Зворотний процес– десеріалізація
+
+JS serialization
+----------------
+
+ JSON.stringify({age: this.age}); //serialize
+ var data = JSON.parse(json); // Parsing the json string. //deserialize
+
+ ----------------
+
+Об’єкт, що серіалізується, повинен реалізовувати інтерфейс Serializable.
+При серіалізації-десеріалізації фактично відбувається копіювання об’єкту, навіть якщо конструктор його класу є приватним.
+
+* Должен быть универсальный и эффективный протокол передачи объектов между компонентами. Сериализация создана для этого, и компоненты Java используют этот протокол для передачи объектов.
+
+Алгоритм сериализации делает следующие вещи:
+
+запись метаданных о классе ассоциированном с объектом
+рекурсивная запись описания суперклассов, до тех пор пока не будет достигнут java.lang.object
+после окончания записи метаданных начинается запись фактических данных ассоциированных с экземпляром, только в этот раз начинается запись с самого верхнего суперкласса
+рекурсивная запись данных ассоциированных с экземпляром начиная с самого низшего суперкласса
+
+***
+Поняття про відображення (reflection, інтроспекція)
+***
+
+Засоби, які дозволяють під час виконання програми отримувати інформацію про класи, їх поля і методи
+Більш загально – для динамічної роботи з кодом. Наприклад – створити екземпляр класу, назва якого вводиться в рядку.
+Базовий інструмент – клас Class.
+Додаткові можливості – пакет java.lang.reflect.
+
+Reflection is a language's ability to inspect and dynamically call classes, methods, attributes, etc. at runtime.
+
+Reflection is the ability to "reflect" on the structure of your program. Or more concrete. To look at the objects and classes you have and programmatically get back information on the methods, fields, and interfaces they implement. You can also look at things like annotations.
+
+It's usefull in a lot of situations. Everywhere you want to be able to dynamically plug in classes into your code. Lot's of object relational mappers use reflection to be able to instantiate objects from databases without knowing in advance what objects they're going to use. Plug-in architectures is another place where reflection is usefull. Being able to dynamically load code and determine if there are types there that implement the right interface to use as a plugin is important in those situations.
+
+
+down vote
+Reflection is a key mechanism to allow an application or framework to work with code that might not have even been written yet!
+
+Take for example your typical web.xml file. This will contain a list of servlet elements, which contain nested servlet-class elements. The servlet container will process the web.xml file, and create new a new instance of each servlet class through reflection.
+
+Another example would be the Java API for XML Parsing (JAXP). Where an XML parser provider is 'plugged-in' via well-known system properties, which are used to construct new instances through reflection.
+
+And finally, the most comprehensive example is Spring which uses reflection to create its beans, and for its heavy use of proxies
+
+For inspection of classes (also know as introspection) you don't need to import the reflection package (java.lang.reflect). Class metadata can be accessed through java.lang.Class.
+
+String s = "qwerty";
+        Class kl = s.getClass();
+        System.out.println (kl.getSimpleName() + " is a subclass of " +
+                kl.getSuperclass().getSimpleName());
+
+
+Три способи отримання екземпляру класу Class:
+
+1. метод getClass() класу Object;
+
+String s = "qwerty";
+Сlass c = s.getClass();
+
+2. виклик статичного методу Class.forName(ім’я класу) – завантаження класу за іменем;
+
+Class c = Class.forName("package.Class_Name");
+
+3. T.class, де Т-деякий тип.
+
+Class c = Class_Name.class;
+
+---------- Examples ----------
+
+* Oтримання методів класу:
+
+Class cl = Class.forName(clName);
+Method[] M  = cl.getMethods();
+for (Method m:M) {
+System.out.println(m);
+} 
+
+* Різниця між getMethods та getDeclaredMethods
+    * getMethods() - повертає всі публічні методи з урахуванням успадкування;
+    * getDeclaredMethods() - вивести список всіх методів, які визначені в класі.
+                            Returns an array containing Method objects reflecting all the declared methods of the class or interface represented by this Class object, including public, protected, default (package) access, and private methods, but excluding inherited methods.
+
+* Динамічне завантаження класу та створення екземпляру
+
+public static void main(String[] args) throws Exception {
+        Class c = Class.forName("dinload.A");
+        A a = (A) c.newInstance();
+        a.inform();
+    }
+}
+class A {
+    static {        System.out.println("A is initialized");    }
+    A() {        System.out.println("Instance created");    }
+    void inform() { System.out.println(“ You can create dinamic instance");    }
+}
+
+OR
+
+Class <Kl> cl = Kl.class;
+Kl ekz = cl.newInstance();
+ekz.metod();
+
+* Треба уникнути зведень до класу, який за ідеєю прикладу має бути невідомим.
+* Злам приватності
+
+class Bastion {
+private String msg = "You cannot change this string";
+
+public String getMsg() {
+        return msg;
+    }
+
+    private void metod() {
+        System.out.println("This method is private!");
+    }
+}
+
+        Bastion b = new Bastion();
+        System.out.println("Our field is: "+b.getMsg());
+        //b.str="Ku-ku"; - це не компілюється
+        Class bk = b.getClass();
+        Field fld = bk.getDeclaredField("msg");
+        fld.setAccessible(true);
+        fld.set(b, "Das ist ku-ku");
+        fld.setAccessible(false);
+        System.out.println("The cracked field is: "+b.getMsg());
+        //b.inform(); - це не компілюється
+        Method m = bk.getDeclaredMethod("metod");
+        m.setAccessible(true);
+        m.invoke(b);
+        m.setAccessible(false);
+
+* Method method = foo.getClass().getMethod("doSomething", null);
+method.invoke(foo, null);
+
+Resources:
+
+http://www.programcreek.com/2013/09/java-reflection-tutorial/
+http://tutorials.jenkov.com/java-reflection/classes.html
+
+***
+Java Philosophy
+***
+
+RTTI (Run-time type information) (Динамічне визначення типів):
+
+1. Компонентне програмування - основа для систем Швидкої розробки додатків (Rapid Application Development)
+2. Можливість створювати і використовувати обєкти на віддалених платформах - Віддалений виклик методів (Remote method invocation)
+
+
+
+"Reflection is commonly used by programs which require the ability to examine or modify the runtime behavior of applications running in the Java virtual machine." This concept is often mixed with introspection. The following are their definitions from Wiki:
+
+Introspection is the ability of a program to examine the type or properties of an object at runtime.
+Reflection is the ability of a program to examine and modify the structure and behavior of an object at runtime.
+

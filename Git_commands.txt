@@ -1,0 +1,982 @@
+---------------------------------------------
+                *** Git *** 
+---------------------------------------------
+
+
+***
+file differences between two commits 
+***
+git diff can show you the difference between two commits:
+
+git diff mybranch master -- myfile.cs
+Or, equivalently:
+
+git diff mybranch..master -- myfile.cs
+
+***
+Config
+***
+git config --global --edit - редагування конфігураційного файлу
+git config --global user.name Name
+git config --global user.email EMAIL
+git config --list
+git config --global credential.helper wincred - save GitHub credentials in Git
+GIT_AUTHOR_NAME
+GIT_COMMITER_EMAIL
+
+***
+Basic
+***
+git init 
+git add .
+git status
+git status -u - show fils being added to git
+git commit -m "first commit of the project"
+
+git commit -a -m 'bla' 
+
+git log
+git log --oneline or git log --pretty=oneline
+git log --no-merges
+
+***
+Show diffs after merge or rabase
+***
+git diff master develop
+git log --oneline master..develop
+//after fetching
+git log --oneline master..origin/master
+
+git add . will add new and modified files to the index.  
+git add -u will delete files from the index when they are deleted on-disk and update modified files, but will not add new files.
+
+git add -A . - catch all three: added, modified, and deleted files
+Note the extra '.' on git add -A and git add -u
+
+***
+Create emty folder and add it to Git
+***
+
+mkdir students/example_team - стоврити пусту директорію
+
+In Git, you cannot commit empty folders, because Git does not actually save folders, only files. 
+You'll have to create some placeholder file inside those directories if you actually want them to be "empty"
+(i.e. you have no committable content).
+Just add a file .gitkeep in every folder you want committed.
+On windows do so by right clicking when in the folder and select: Git bash from here. Then type: touch .gitkeep
+
+touch students/example_team/.gitkeep 
+git add students/example_team/
+git commit --message="Added project folder"
+git push origin example_team_project
+
+***
+Add files to .gitignore
+***
+
+1. Create the text file gitignore.txt
+2. Open it in a text editor and add your rules, then save and close
+Rule ex:
+/Build/*
+3. Hold SHIFT + right click the folder you're in, then select Open command window here
+4. Then rename the file in the command line, with ren gitignore.txt .gitignore
+
+ .classpath
+ .settings/
+ target/
+
+ ***
+ Add gitignore to existing project
+ ***
+
+ First commit any outstanding code changes, and then, run this command:
+
+git rm -r --cached .
+This removes everything from theindex, then just run:
+
+git add .
+Commit it:
+
+git commit -m ".gitignore is now working"
+You can also remove individual files, if you don't want such a drastic approach:
+
+git rm --cached filename
+
+
+***
+git stash
+***
+
+Ще однієї зручною командою Git є git stash. Якщо в процесі роботи над проектом виникає потреба оновити локальний репозиторій змінами з віддаленого, або розпочати роботу на іншій гілці, але при цьому не робити комміт незавершеної роботи над проектом, доцільним є використання цієї команди, оскільки вона приховує усі внесені зміни та повертає проект до стану останнього комміта. Це дає можливість виконати команду git pull чи git checkout , а потім продовжити роботу над змінами проекту, виконавши команду   git stash apply (рисунок 2.17).
+
+Також є певний список параметрів, які можна застосовувати до команди git stash:
+   git stash list – вивід списку змін;
+   git stash show – вивід останніх змін;
+   git stash drop – видалення останніх змін у списку;
+   git stash pop – застосування змін до поточної версії проекту та видалення останніх змін зі списку;
+   git stash clear –  видалення усіх змін зі списку;
+
+*** 
+Branching
+*** 
+
+git checkout -b name - create and start working
+
+git branch -d name                    - delete local branch.  Git prevents you from deleting the branch if it has unmerged changes.
+git push origin --delete branch_name  - delete remote branch 
+git push origin :branch_name          - delete remote branch 
+git branch -D <branch>                - Force delete the specified branch, even if it has unmerged changes. 
+
+git branch -m <branch>                - Rename the current branch to <branch>.
+
+git branch - show all local branches
+git branch -vv - show all local branches with their traching remote branches and show if your local branch is ahead, behind or both 
+                 in comparison with their remote bracnhes' states
+git branch -v - show all local branches with their last commits 
+git branch —all 
+git branch -a  - show all local and remote brnahces
+git branch -r - show all remote branches
+
+The useful —merged and —no-merged options can filter this list to branches that you have or have not yet merged into the branch you’re currently on:
+
+git branch —merged 
+git branch —no-merged 
+
+git branch -u origin/serverfix - Branch serverfix set up to track remote branch serverfix from origin. 
+
+--------------------------- ---------------------------------------------------------------------------------------------------------------
+************************************************** Files/Changes modifications ********************************************************
+------------------------------------------------------------------------------------------------------------------------------------------
+
+git clean -n  - show untracked files (new file which have never been added to the commit)in the working directory
+git clean -d -f - delete untracked directory with files
+git clean -f  - delete untracked files from working directory (will remove untracked files)
+git reset --hard will not remove untracked files, where as git clean -f will remove any files from the tracked root directory that are not under Git tracking:
+
+Revert project state to the previous commit:
+git reset --hard
+git clean -n
+git clean -f
+
+***
+Git amend
+*** 
+git add .
+git commit -m 'initial commit'
+git add forgotten_file
+git commit --amend  - додасть forgotten_file файл до останнього комміта
+
+git reset  - back all files from staging area(place for files after git add .) to working area
+git reset filename - back one file from staging area to working directory
+git reset --mixed HEAD - back all files from staging area(place for files after git add .) to working directory
+
+git checkout HEAD file  or git checkout file -  discard unstaged changes in the working directory 
+This is similar behavior to git reset HEAD --hard, but it operates only on the specified file.
+
+git checkout commit_hash_code - to previous commit
+
+git reset <commit> - go to particular commit staying all changes in working directory. 
+git reset HEAD~1   - undo last commit
+
+git rm --cached file_name -  remove the file only from the (staging area) and not remove it from the filesystem (working directory)
+git rm -r target/ - remoce folder from file syst
+
+git rm  file_name - delete file from te local file system and add deletation to the staging area
+//how to obtain this file again?
+git amend
+git checkout filename
+
+***
+DATA recovery
+***
+
+*** Recover git reset --hard changes ***
+
+git log --pretty=oneline
+git reset --hard 1a410efbd13591db07496601ebc7a059dd55cfe9
+git log --pretty=oneline
+git log -g
+git branch recover-branch ab1afef
+git log --pretty=oneline recover-branch
+
+*** Recover git branch -D recover-branch changes ***
+
+git branch -D recover-branch
+git fsck --full
+git branch recover-branch commit 
+
+***
+Git checkout/ git revert/ git reset/ git clean/ git rm
+***
+
+***
+git checkout
+***
+
+3 functions:
+-check out branches
+-check out commits
+-check out files
+
+***
+
+--------------
+commit modifications
+--------------
+* git checkout <commit>
+Update all files in the working directory to match the specified commit. 
+Checking out an old commit is a read-only operation. It’s impossible to harm your repository while viewing an old revision. 
+The “current” state of your project remains untouched in the current branch.
+When you check out a previous commit, HEAD no longer points to a branch — it points directly to a commit. This is called a “detached HEAD” state.
+
+This is useful for quickly inspecting an old version of your project. However, since there is no branch reference to the current HEAD, this puts you in a detached HEAD state. This can be dangerous if you start adding new commits because there will be no way to get back to them after you switch to another branch. For this reason, you should always create a new branch before adding commits to a detached HEAD.
+
+Ex:
+
+git checkout a1e8fb5
+/* Nothing you do in here will be saved in your repository. */
+git checkout master - get back to the “current” state of your project and continue developing
+
+*git checkout HEAD~2  - command will check out to the grandparent commit of the current commit
+
+--------------
+files modifications
+--------------
+* git checkout file - rever file state to last commit state deleting all currect changes of the file (use when changes are in working directory. Otherwise: 
+                       git reset file
+                       git checkout file)
+
+Checking out a file lets you see an old version of that particular file, leaving the rest of your working directory untouched.
+
+* git checkout <commit> <file>
+Check out a previous version of a file. This turns the <file> that resides in the working directory into an exact copy of the one from <commit> and adds it to the staging area.
+
+Ex
+---------------------------------------------
+git checkout a1e8fb5 hello.py or git checkout HEAD~2 hello.py
+
+This removes all of the subsequent changes to the file, whereas the git revert command undoes only the changes introduced by the specified commit. 
+
+If you decide you don’t want to keep the old version, you can check out the most recent version with the following:
+
+* git checkout HEAD hello.py  or git checkout file -  discard unstaged changes in the working directory to hello.py.
+This is similar behavior to git reset HEAD --hard, but it operates only on the specified file.
+* git checkout HEAD~2 foo.py - makes foo.py in the working directory match the one from the 2nd-to-last commit
+
+
+---------------------------------------------
+
+*** 
+Git checkout
+*** 
+
+* git checkout --ours file - accept changes to file from our branch
+* git checkout --theirs file - accept changes tp file from their (merging) branch
+* git checkout (назва відповідної гілки) (назва файлу) - accept changes to file from the appropriate branch
+
+* git checkout -b serverfix origin/serverfix - Branch serverfix set up to track remote branch serverfix from origin. 
+
+Checking out a local branch from a remote-tracking branch automatically creates what is called a “tracking branch” (and the branch it tracks is called an “upstream branch”). 
+If you’re on a tracking branch and type git pull, Git automatically knows which server to fetch from and branch to merge into.
+
+Для створення власної нової гілки на основі віддаленої потрібно здійснити команду  git checkout –b (назва гілки) (назва віддаленої гілки ). Такі гілки називаються відстежуючими гілками. При виконанні команд git push та git pull, перебуваючи на цих гілках, Git надсилатиме зміни автоматично в відповідний віддалений репозиторій та на потрібну гілку. 
+
+* git checkout --track origin/serverfix - Branch serverfix set up to track remote branch serverfix from origin. 
+
+If the branch name you’re trying to checkout (a) doesn’t exist and (b) exactly matches a name on only one remote, Git will create a tracking branch for you: 
+
+* git checkout serverfix - Branch serverfix set up to track remote branch serverfix from origin. 
+
+* git branch -u origin/serverfix - Branch serverfix set up to track remote branch serverfix from origin. 
+
+***
+git revert
+***
+--------------
+commit modifications
+--------------
+
+Undo commits in a public branch
+
+The git revert command undoes a committed snapshot.
+But, instead of removing the commit from the project history, it figures out how to undo the changes introduced by the commit and appends a new commit with the resulting content. This prevents Git from losing history.
+
+* git revert <commit> - Generate a new commit that undoes all of the changes introduced in <commit>, then apply it to the current branch
+
+Reverting should be used when you want to remove an entire commit from your project history. This can be useful, for example, if you’re tracking down a bug and find that it was introduced by a single commit. Instead of manually going in, fixing it, and committing a new snapshot, you can use git revert to automatically do all of this for you.
+
+For example, the following command will figure out the changes contained in the 2nd to last commit, create a new commit undoing those changes, and tack the new commit onto the existing project:
+
+git checkout hotfix
+git revert HEAD~2
+
+Git revert should be used to undo changes on a public branch, 
+git reset should be reserved for undoing changes on a private branch.
+
+Git revert - a tool for undoing committed changes, while
+git reset HEAD is for undoing uncommitted changes.
+
+***
+git reset
+***
+
+It should only be used to undo local changes — you should never reset snapshots that have been shared with other developers.
+--------------
+commit modifications
+--------------
+Move the tip of a branch to a different commit (usually to the previous commit).
+This can be used to remove commits from the current branch. 
+It alters the existing commit history. 
+
+git checkout hotfix
+git reset HEAD~2 - go to the 2 commits back; you’re saying that you want to throw away 2 last commits. 
+
+It's a simple way to undo changes that haven’t been shared with anyone else. It’s your go-to command when you’ve started working on a feature and find yourself thinking, “Oh crap, what am I doing? I should just start over.”
+
+git reset HEAD ~ - delete last commit
+Після її виконання усі зміни у файлах, що входили до комміта, стають знову не доданими до області підготовлених файлів 
+
+ These modes define the scope of a git reset operation:
+--soft – The staged snapshot and working directory are not altered in any way.
+--mixed (DEFAULT OPTION) – The staged snapshot is updated to match the specified commit, but the working directory is not affected. 
+Back changes from staging area to working area
+--hard – The staged snapshot and the working directory are both updated to match the specified commit. All changes from working dir/ staging area/repo are deleted 
+
+These flags are often used with HEAD as the parameter:
+
+git reset --mixed HEAD  - has the affect of unstaging all changes, but leaves them in the working directory.
+git reset --hard HEAD   - completely throw away all your uncommitted changes
+
+
+1. Reset the staging area to match the most recent commit, but leave the working directory unchanged. This unstages all files without overwriting any changes, giving you the opportunity to re-build the staged snapshot from scratch:
+
+* git reset
+
+2. Reset the staging area and the working directory to match the most recent commit. In addition to unstaging changes, the --hard flag tells Git to overwrite all changes in the working directory, too. Put another way: this obliterates (стирати) all uncommitted changes, so make sure you really want to throw away your local developments before using it:
+
+* git reset --hard
+
+3. Move the current branch tip backward to <commit>, reset the staging area to match, but leave the working directory alone. All changes made since <commit> will reside in the working directory, which lets you re-commit the project history using cleaner, more atomic snapshots:
+
+* git reset <commit>
+
+git reset <commit> - go to particular commit staying all changes in working directory. 
+git reset HEAD~1   - undo last commit
+
+4. Move the current branch tip backward to <commit> and reset both the staging area and the working directory to match. This obliterates not only the uncommitted changes, but all commits after <commit>, as well:
+
+* git reset --hard <commit>
+
+git reset -- hard b50d025   - back project to particular commit state
+git reset --hard <SOME-COMMIT> then Git will:
+
+    1. Make your current branch (typically master) back to point at <SOME-COMMIT>.
+    2. Then make the files in your working tree and the index ("staging area") the same as the versions committed in <SOME-COMMIT>.
+
+You should never use git reset <commit> when any snapshots after <commit> have been pushed to a public repository.
+After publishing a commit, you have to assume that other developers are reliant upon it.
+
+1. Change your current branch to point to the older commit instead. You could do that with git reset --hard f414f31. However, this is rewriting the history of your branch, so you should avoid it if you've shared this branch with anyone. Also, the commits you did after f414f31 will no longer be in the history of your master branch.
+
+2. Create a new commit that represents exactly the same state of the project as f414f31, but just adds that on to the history, so you don't lose any history. You can do that using the steps suggested in this answer - something like:
+git reset --hard f414f31
+git reset --soft HEAD@{1}
+git commit -m "Reverting to the state of the project at f414f31`
+
+
+--------------
+files modifications
+--------------
+Remove the specified file from the staging area, but leave the working directory unchanged. This unstages a file without overwriting any changes:
+git reset <file>
+
+
+When invoked with a file path, git reset updates the staged snapshot to match the version from the specified commit. For example, this command will fetch the version of foo.py in the 2nd-to-last commit and stage it for the next commit:
+git reset HEAD~2 foo.py
+
+git reset HEAD foo.py  - will unstage foo.py (from staging to working dir).The changes it contains will still be present in the working directory.
+
+***
+git clean
+***
+
+Removes untracked files from your working directory.
+git status // list of untracked files
+git clean -n //list of untracked files to delete
+git clean -f // delete all untracked files. This will not remove untracked folders or files specified by .gitignore.
+git clean -f <path> //Remove untracked files, but limit the operation to the specified path.
+git clean -d -f // delete untracked directory with files
+git clean -df //Remove untracked files and untracked directories from the current directory.
+git clean -xf //Remove untracked files from the current directory as well as any files that Git usually ignores.
+
+git clean -f + git reset --hard 
+Remember that resetting only affects tracked files, so a separate command is required for cleaning up untracked ones. Combined, these two commands let you return the working directory to the exact state of a particular commit.
+Running both of them will make your working directory match the most recent commit, giving you a clean slate to work with.
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+**************************************************** Git with remote ********************************************************************
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+***
+Git remote repository ("origin" as usual)
+***
+
+git remote add <name> <url>  -  add remote repo to local repo
+git remote rm <name>         - remove remote repo from local repo
+git remote rename <old-name> <new-name>  - rename remote repo
+
+git remote -v                - show all the remotes with their urls 
+git ls-remote [remote] 
+git remote show [remote] 
+
+*** 
+Git clone
+***
+
+git clone url 
+git clone -o booyah 
+
+booyah/master as your default remote branch. 
+
+git checkout -b experimental origin/experimental
+or
+git branch -a
+git checkout experimental
+
+
+***
+Git fetch
+*** 
+
+git fetch —all 
+git fetch <remote> - Fetch all of the branches from the repository. 
+git fetch <remote> <branch> 
+
+git log --oneline master..origin/master - see what commits have been added to the upstream master
+
+git checkout master
+git log origin/master
+git merge origin/master
+
+git checkout -b serverfix origin/serverfix 
+Branch serverfix set up to track remote branch serverfix from origin. 
+
+The resulting commits are stored as remote branches instead of the normal local branches that we’ve been working with. This gives you a chance to review changes before integrating them into your copy of the project. 
+
+*** 
+EXAMPLE: 
+*** 
+1.
+git fetch origin 
+git log —oneline master..origin/master - To see what commits have been added to the upstream master, you can run a git log using origin/master as a filter 
+git checkout master 
+git log origin/master 
+git merge origin/master 
+
+2.
+git fetch origin
+git diff origin/master master
+(git merge  origin/master master) == (git checkout master; git merge origin/master --- ?)
+
+*** 
+Git pull
+***
+
+git pull <remote> - Fetch the specified remote’s copy of the current branch and immediately merge it into the local copy. This is the same as git fetch <remote> followed by git merge origin/<current-branch>. 
+
+git pull --all
+
+git pull --rebase <remote> - Same as the above command, but instead of using git merge to integrate the remote branch with the local one, use git rebase. 
+
+---------------------
+pulling vs rebasing 
+--------------------
+
+The —rebase option can be used to ensure a linear history by preventing unnecessary merge commits. Many developers prefer rebasing over merging, since it’s like saying, “I want to put my changes on top of what everybody else has done.” In this sense, using git pull with the —rebase flag is even more like svn update than a plain git pull. 
+
+git config —global branch.autosetuprebase always - After running that command, all git pull commands will integrate via git rebase instead of git merge.
+
+*** 
+EXAMPLE: 
+*** 
+
+git checkout master 
+git pull —rebase origin 
+
+“I want to put my changes on top of what everybody else has done.” 
+
+This simply moves your local changes onto the top of what everybody else has already contributed. 
+
+*** 
+Git push
+***
+
+git push -u origin branch - push branch to the remote repo.  -u flag adds it as a remote tracking branch.
+After setting up the tracking branch you can call  just "git push" from this branch without any parameters to push her feature.
+git push -u origin featureB:featureBee
+git push <remote> <branch> 
+git push origin serverfix:serverfix 
+If you didn’t want it to be called serverfix on the remote, you could instead run git push origin serverfix:awesomebranch to push your local serverfix branch to the awesomebranch branch on the remote project. 
+git push <remote> —force 
+git push <remote> —all  
+git push <remote> —tags -sends all of your local tags to the remote repository
+* Notice how git push is essentially the same as running git merge master from inside the remote repository. 
+
+Set up a “credential cache”: 
+git config —global credential.helper cache 
+
+
+--------------
+ Force Pushing 
+ -------------
+Git prevents you from overwriting the central repository’s history by refusing push requests when they result in a non-fast-forward merge. So, if the remote history has diverged from your history, you need to pull the remote branch and merge it into your local one, then try pushing again. 
+
+
+
+*** 
+EXAMPLE: 
+*** 
+
+The following example describes one of the standard methods for publishing local contributions to the central repository. 
+First, it makes sure your local master is up-to-date by fetching the central repository’s copy and rebasing your changes on top of them. The interactive rebase is also a good opportunity to clean up your commits before sharing them. 
+Then, the git push command sends all of the commits on your local master to the central repository. 
+
+git checkout master 
+git fetch origin master 
+git rebase -i origin/master 
+# Squash commits, fix up commit messages etc. 
+git push origin master 
+
+Кладем змыни з master поверх origin/master 
+
+Since we already made sure the local master was up-to-date, this should result in a fast-forward merge, and git push should not complain about any of the non-fast-forward issues discussed above.
+
+-------------------------------------------------------------------------------------------------------------------------------------
+************************************************** MERGING/REBASING *****************************************************************
+-------------------------------------------------------------------------------------------------------------------------------------
+***
+merge/rebase 2 ways
+
+-----------------------
+1. merge feature branch into master branch
+
+1 way:
+    git checkout master
+    git merge feature
+
+2 way:
+    git merge feature master
+    
+----------------------
+2. rebase develop changes on top of the master changes
+
+1 way:
+
+    git rebase master develop   (rebase develop changes on top of the master changes)
+    git checkout master
+    git merge develop
+    git branch -d develop
+
+2. way:
+
+    git checkout develop
+    git rebase master (rebase develop changes on top of the master changes)
+    git checkout master
+    git merge develop
+    git branch -d develop
+-------------------------
+
+
+***
+Show diffs after merge or rabase
+***
+git diff master develop
+git log --oneline master..develop
+
+
+*** 
+Git Merge vs Git Rebase 
+*** 
+The golden rule of git rebase is to never use it on public branches. 
+*** 
+
+git checkout experiment 
+git rebase master 
+
+* Rebase changes from current branch (experiment) on top of master branch 
+
+*** 
+GIT merge 
+*** 
+git checkout current_branch 
+git merge target_branch - зливаємо target_branch в  current_branch. Зміна історії  current_branch. Історія target_branch незмінна.
+
+Fast-forward:
+Git переспрямовує указник  current_branch  на комміт, на який вказує указник target_branch
+
+git merge --no-ff <branch> - Merge the specified branch into the current branch, but always generate a merge commit (even if it was a fast-forward merge).
+git merge --abort                - reject merging process
+git reset --hard ORIG_HEAD       - reject completed merging 
+
+Ex:
+-----------------------
+merge feature branch into master branch
+----------------------
+git checkout master
+git merge feature
+
+the same
+
+git merge feature master
+
+
+-----------------------
+
+----------------------------— 
+GIT MERGE CONFLICT 
+----------------------------— 
+
+git checkout master 
+git merge test => conflict: 
+git status 
+
+----— 
+
+«««< HEAD master:index.html 
+<div id="footer">contact : email.support@github.com</div> 
+
+
+======= 
+<div id="footer"> 
+please contact us at support@github.com 
+</div> 
+»»»> test:index.html 
+
+-----------------------— 
+
+git add file 
+git status 
+git commit
+
+***
+Merge conflict resolving:
+***
+
+git checkout --ours file - accept changes to file from our branch
+git checkout --theirs file - accept changes tp file from their (merging) branch
+
+git checkout (назва відповідної гілки) (назва файлу) - accept changes to file from the appropriate branch
+git add (назва зміненого файлу)  - to complete merging
+git merge --abort                - reject merging process
+git reset --hard ORIG_HEAD       - reject completed merging 
+
+При відміні процесу злиття і уникнення потреби вирішення конфлікту  існує команда git merge --abort.
+За відміну злиття після його здійснення відповідає команда git reset --hard ORIG_HEAD
+
+//Example using git rebase
+
+git checkout develop
+git pull --rebase origin develop
+
+Rebasing works by transferring each local commit to the updated master branch one at a time. This means that you catch merge conflicts on a commit-by-commit basis rather than resolving all of them in one massive merge commit. This keeps your commits as focused as possible and makes for a clean project history. In turn, this makes it much easier to figure out where bugs were introduced and, if necessary, to roll back changes with minimal impact on the project.
+
+//conflict
+git status - show in wich files conflict appears
+git add .
+git rebase --continue
+git rebase --abort
+git push origin develop
+
+//undo rebase
+git reflog // to find the head commit of the branch as it was immediately before the rebase started in the reflog
+git reset --hard HEAD@{5} //reset the current branch to it
+
+
+--------------------------------------------------
+MERGE vs REBASE
+--------------------------------------------------
+
+In Git, there are two main ways to integrate changes from one branch into another: 
+    * the merge 
+    * the rebase
+
+With the rebase command, you can take all the changes that were committed on one branch and replay them on another one.
+
+It works by going to the common ancestor of the two branches (the one you’re on and the one you’re rebasing onto), getting the diff introduced by each commit of the branch you’re on, saving those diffs to temporary files, resetting the current branch to the same commit as the branch you are rebasing onto, and finally applying each change in turn.
+
+Rebasing makes for a cleaner history. If you examine the log of a rebased branch, it looks like a linear history: it appears that all the work happened in series, even when it originally happened in parallel.
+
+Rebasing replays changes from one line of work onto another in the order they were introduced, whereas merging takes the endpoints and merges them together.
+
+ git checkout experiment
+ git rebase master
+ git checkout master
+ git merge experiment (fast-forward)
+
+***
+You can take the changes on client that aren’t on server (C8 and C9) and replay them on your master branch by using the --onto option of git rebase:
+
+This basically says, “Check out the client branch, figure out the patches from the common ancestor of the client and server branches, and then replay them onto master.” It’s a bit complex, but the result is pretty cool.
+
+
+git rebase --onto master server client
+git checkout master
+git merge client (fast-forward)
+
+git rebase master server - This replays your server work on top of your master work (on master branch)
+git checkout master
+git merge server (fast-forward)
+git branch -d client
+git branch -d server
+
+
+Do not rebase commits that exist outside your repository.
+
+When you rebase stuff, you’re abandoning existing commits and creating new ones that are similar but different. If you push commits somewhere and others pull them down and base work on them, and then you rewrite those commits with git rebase and push them up again, your collaborators will have to re-merge their work and things will get messy when you try to pull their work back into yours.
+
+***
+
+You can also simplify this by running a git pull --rebase instead of a normal git pull. Or you could do it manually with a git fetch followed by a git rebase teamone/master in this case.
+
+If you are using git pull and want to make --rebase the default, you can set the pull.rebase config value with something like git config --global pull.rebase true.
+
+***
+
+If you treat rebasing as a way to clean up and work with commits before you push them, and if you only rebase commits that have never been available publicly, then you’ll be fine. If you rebase commits that have already been pushed publicly, and people may have based work on those commits, then you may be in for some frustrating trouble, and the scorn of your teammates.
+
+If you or a partner does find it necessary at some point, make sure everyone knows to run git pull --rebase to try to make the pain after it happens a little bit simpler.
+
+***
+Rebase vs. Merge
+***
+
+In general the way to get the best of both worlds is to rebase local changes you’ve made but haven’t shared yet before you push them in order to clean up your story, but never rebase anything you’ve pushed somewhere.
+
+* One point of view on this is that your repository’s commit history is a record of what actually happened.
+From this angle, changing the commit history is almost blasphemous; you’re lying about what actually transpired.
+
+* The opposing point of view is that the commit history is the story of how your project was made.
+This is the camp that uses tools like rebase and filter-branch to tell the story in the way that’s best for future readers.
+
+***
+Злиття змін з develop - гілки на master - гілку (rebase)
+Для злиття змін з  develop - гілки на локальну master - гілку перед здійсненням git push origin master
+ми здійснюємо, якщо комміти, rebase яких ми здійснюємо, ще не були запушені на віддаленй репозиторій,з метою створення лінійної історії змін проекту : 
+
+1 спосіб:
+
+git rebase master develop   (rebase develop changes on top of the master changes)
+git checkout master
+git merge develop
+git branch -d develop
+
+//undo rebase
+git reflog // to find the head commit of the branch as it was immediately before the rebase started in the reflog
+git reset --hard HEAD@{5} //reset the current branch to it
+
+2. спосіб:
+
+git checkout develop
+git rebase master (rebase develop changes on top of the master changes)
+git checkout master
+git merge develop
+git branch -d develop
+
+
+
+***
+Git distributed workflows
+***
+
+1. Centralized Workflow
+2. Integration-Manager Workflow:
+ 2.1 Feature Branch Workflow
+ 2.2 Gitflow Workflow - robust framework for managing larger projects. Define the branch structure of the project:
+ 2.3 Forking Workflow
+***
+Gitflow workflow
+***
+
+Provides a robust framework for managing larger projects.
+It assigns very specific roles to different branches and defines how and when they should interact. 
+In addition to feature branches, it uses individual branches for preparing, maintaining, and recording releases. 
+
+The main branches:
+ - master
+ - develop (test-for-deploy)
+
+Supporting branches:
+ - Feature branches ()
+    May branch off from:
+    develop
+    Must merge back into:
+    develop
+    Branch naming convention:
+    anything except master, develop, release-*, or hotfix-*
+ - Release branches ()
+    May branch off from:
+    develop
+    Must merge back into:
+    develop and master
+    Branch naming convention:
+    release-*
+ - Hotfix branches ()
+
+***
+Precess in commands
+***
+
+//develop
+Me:
+ git remote add origin url
+ git push origin master
+ git checkout -b develop
+ git push -u origin develop
+
+//feature
+ You:
+ git clone ssh://user@host/path/to/repo.git
+ git checkout -b develop origin/develop
+
+ Me:
+ git checkout -b my-feature develop
+ git status
+ git add <some-file>
+ git commit
+
+ You:
+ git checkout -b some-feature develop
+ git status
+ git add <some-file>
+ git commit
+
+ 1 attitude:
+  time to open pull requests asking to merge feature into develop
+ 2 attitude:
+  git pull origin develop
+  or
+  git fetch origin develop
+  git log --oneline develop..origin/develop
+  git merge origin/develop
+
+  git checkout develop
+  git merge  --no-ff some-feature
+  git push origin develop
+  git branch -d some-feature/ git branch -D some-feature
+
+//release-1.0
+  git checkout -b release-1.0 develop
+  git commit -a -m "Bumped version number to 1.2"
+  git checkout master
+  git merge --no-ff release-1.0
+  git tag -a 0.1 -m "Initial public release" master
+  git push --tags
+  git push origin master
+  git checkout develop
+  git merge --no-ff release-1.0
+  git push origin develop
+  git branch -d release-1.0
+
+  //hotfix-1.1
+  //fix a bug in the current release
+  git checkout -b hotfix-1.1 master
+  # Fix the bug
+  git commit -a -m "Bumped version number to 1.2.1"
+  git checkout master
+  git merge --no-ff hotfix-1.1
+  git tag -a 1.2.1
+  git push --tags
+  git push origin master
+  git checkout develop
+  git merge --no-ff hotfix-1.1
+  git push origin master
+  git branch -d hotfix-1.1
+
+Merge the develop into the stable project: 
+
+git checkout master
+git fetch origin master
+git log --oneline master..origin/master
+git merge origin/master
+
+git pull origin develop
+or
+git checkout develop
+git fetch origin develop
+git log --oneline develop..origin/develop
+git merge origin/develop
+git chekout master
+git merge --no-ff develop
+git push prigin master
+
+
+3. Dictator and Lieutenants Workflow
+
+1. Centralized Workflow
+Private Small Team:
+
+git clone john@githost:simplegit.git (1)
+git commit -am 'removed invalid default value'
+
+git clone jessica@githost:simplegit.git (2)
+git commit -am 'add reset task'
+
+git push origin master (1)
+
+git push origin master (2) => error: failed to push some refs to 'john@githost:simplegit.git':
+
+git fetch origin
+git merge origin/master
+git push origin master
+
+or
+
+git pull --rebase origin master - put your changes on top of the origin/master (liniar history)
+
+//if conflict
+git status //show files with conflict
+git add <some-file>
+git rebase --continue
+git rebase --abort // disacrd rebase process
+
+git checkout -b new_br
+git fetch origin (1)
+git log --no-merges issue54..origin/master
+git checkout master
+git merge issue54
+git merge origin/master
+git push origin master
+
+Private Managed Team:
+
+git checkout -b featureA
+git commit -am 'add limit to log function'
+git push -u origin featureA
+
+git fetch origin
+git checkout featureB
+git merge origin/featureBee
+git push -u origin featureB:featureBee
+
+git fetch origin
+git log featureA..origin/featureA
+git checkout featureA
+git merge origin/featureA
+git commit -am 'small tweak'
+git push
+
+
+Pull Requests
+
+Once someone completes a feature, they don’t immediately merge it into master. Instead, they push the feature branch to the central server and file a pull request asking to merge their additions into master. This gives other developers an opportunity to review the changes before they become a part of the main codebase.
+
+ You can think of pull requests as a discussion dedicated to a particular branch. 
+
+  For example, if a developer needs help with a particular feature, all they have to do is file a pull request. Interested parties will be notified automatically, and they’ll be able to see the question right next to the relevant commits.
+
+Merge the feature into the stable project: 
+
+git checkout master
+git pull
+git pull origin marys-feature
+git push

@@ -1,0 +1,54 @@
+http://blog.jhades.org/how-does-spring-transactional-really-work/
+
+JPA Specifications
+
+https://spring.io/blog/2011/04/26/advanced-spring-data-jpa-specifications-and-querydsl/
+
+https://spring.io/guides/gs/accessing-data-jpa/
+
+https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-part-four-jpa-criteria-queries/
+
+http://www.programcreek.com/java-api-examples/index.php?api=javax.persistence.criteria.Predicate
+
+https://en.wikibooks.org/wiki/Java_Persistence/Criteria
+
+Spring DOC
+
+http://www.baeldung.com/the-persistence-layer-with-spring-and-jpa
+
+http://www.baeldung.com/spring-dao-jpa
+
+https://docs.oracle.com/javaee/7/api/javax/persistence/EntityManager.html
+
+http://howtodoinjava.com/jpa/spring-hibernate-jpa-configuration-example/
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+http://www.mscharhag.com/java/specification-pattern-in-java-jpa
+
+
+!!!!! Testing !!!!!!
+
+https://spring.io/blog/2011/06/21/spring-3-1-m2-testing-with-configuration-classes-and-profiles
+
+!!!!!!!!!!!! Hibernate ManyToMany !!!!!!!!!!!!!!!
+**************** The many-to-many association with composite key (in a pure JPA style without redundancy) ***************
+
+https://en.wikibooks.org/wiki/Java_Persistence/ManyToMany#Additional_columns_in_join_table.
+https://giannigar.wordpress.com/2009/09/04/mapping-a-many-to-many-join-table-with-extra-column-using-jpa/
+
+!!!!!!!!!!! JPA/Hibernate: detached entity passed to persist !!!!!!!!!!!!!!!
+
+http://stackoverflow.com/questions/23645091/spring-data-jpa-and-hibernate-detached-entity-passed-to-persist-on-manytomany-re
+http://blog.xebia.com/jpa-implementation-patterns-saving-detached-entities/
+http://stackoverflow.com/questions/13370221/jpa-hibernate-detached-entity-passed-to-persist
+http://meri-stuff.blogspot.com/2012/03/jpa-tutorial.html#RelationshipsBidirectionalOneToManyManyToOneConsistency
+https://notesonjava.wordpress.com/2008/11/03/managing-the-bidirectional-relationship/
+
+http://stackoverflow.com/questions/3927091/save-child-objects-automatically-using-jpa-hibernate
+
+
+
+@OneToMany(fetch = FetchType.LAZY, mappedBy = "orderItemId.order", cascade = { CascadeType.PERSIST,
+            CascadeType.MERGE })
+    @Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE })
+    private List<OrderItemPO> orderItems;

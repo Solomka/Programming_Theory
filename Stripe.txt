@@ -1,0 +1,301 @@
+***
+E-commerce
+***
+Електро́нна коме́рція (від англ. e-commerce) — це сфера цифрової економіки, що включає всі фінансові та торгові транзакції, які проводяться за допомогою комп'ютерних мереж, та бізнес-процеси, пов'язані з проведенням цих транзакцій. 
+
+До електронної комерції відносять електронний обмін інформацією (англ. Electronis Data Interchange, EDI), електронний рух капіталу (англ. Electronic Funds Transfer, EFT), електронну торгівлю (англ. E-Trade), електронні гроші (E-Cash), електронний маркетинг (англ. E-Marketing), електронний банкінг (англ. E-Banking), електронні страхові послуги (англ. E-Insurance) тощо. 
+
+Electronic commerce, commonly written as e-commerce or eCommerce, is the trading (торгівля) or facilitation (допомога) of trading in products or services using computer networks, such as the Internet or online social networks.[1] Electronic commerce draws on technologies such as mobile commerce, electronic funds transfer, supply chain management, Internet marketing, online transaction processing, electronic data interchange (EDI), inventory management systems, and automated data collection systems. Modern electronic commerce typically uses the World Wide Web for at least one part of the transaction's life cycle although it may also use other technologies such as e-mail.
+
+E-commerce businesses may employ some or all of the following:
+
+Online shopping web sites for retail (at retail — у роздріб) sales direct to consumers
+Providing or participating in online marketplaces (ринок товарів), which process third-party business-to-consumer or consumer-to-consumer sales
+Business-to-business buying and selling
+Gathering and using demographic data through web contacts and social media
+Business-to-business electronic data interchange
+Marketing to prospective and established customers by e-mail or fax (for example, with newsletters)
+Engaging in pretail for launching new products and services
+Online financial exchanges for currency exchanges or trading purposes
+
+***
+authentication/authorisation
+***
+
+Аутентифікація ( authentication) - процедура встановлення належності користувачеві інформації в системі пред'явленого ним ідентифікатора. [1].
+З позицій інформаційної безпеки Автентифікація є частиною процедури надання доступу для роботи в інформаційній системі, 
+наступною після ідентифікації і передує авторизації
+
+Авторизація (authorisation) - керування рівнями та засобами доступу до певного захищеного ресурсу, як в фізичному розумінні (доступ до кімнати готелю за карткою), так і в галузі цифрових технологій (наприклад, автоматизована система контролю доступу) та ресурсів системи залежно від ідентифікатора і пароля користувача або надання певних повноважень (особі, програмі) на виконання деяких дій у системі обробки даних.
+З позицій інформаційної безпеки Авторизація є частиною процедури надання доступу для роботи в інформаційній системі, після ідентифікації і автентифікації.
+
+Аутентифікація - чи є користувач з таким логіном і паролем в бд додатку
+Авторизація - доступ до яких ресурсів додатку має цей користвач, і які дії йому дозволено здійснювати
+
+***
+Project requirements:
+ - E-commerce
+ - Java
+ - Spring
+ - Stripe
+ - oauth
+ - Git (GitHub)
+
+ - vendors (постачальник/продавець) of products
+ - sellers + buyers + system (You, baby)
+
+***
+Task
+***
+
+сайт-посередник
+
+Продає товари, послуги, чи товар один як на олкс, чи ти реєструєшся як магазин, як на аліекспресс
+страйп допомогає проводити операції з карткою
+проект пишемо — щось типу амазону або аліекспресу або olx
+щоб люди могли продавати там щось і/або купувати щось
+
+***
+Tasks:
+***
+
+1. Stripe API
+2. Construct payment module - uml-diagrams: Stripe -> Real_life
+3. Empty GitHub repo
+
+***
+UML
+***
+
+The Unified Modeling Language (UML) is a general-purpose, developmental, modeling language in the field of software engineering, that is intended to provide a standard way to visualize the design of a system.
+
+UML diagrams represent two different views of a system model:[17]
+
+Static (or structural) view: emphasizes the static structure of the system using objects, attributes, operations and relationships. It includes class diagrams and composite structure diagrams.
+Dynamic (or behavioral) view: emphasizes the dynamic behavior of the system by showing collaborations among objects and changes to the internal states of objects. This view includes sequence diagrams, activity diagrams and state machine diagrams.
+
+Structure diagrams[edit]
+Structure diagrams emphasize the things that must be present in the system being modeled. Since structure diagrams represent the structure, they are used extensively in documenting the software architecture of software systems. 
+
+For example, the component diagram describes how a software system is split up into components and shows the dependencies among these components.
+
+****************************************************************************************************************************************
+                                                             Stripe
+****************************************************************************************************************************************
+
+***
+Stripe enables you to accept payments in minutes. Collect your customers’ payment information easily and securely on web or mobile, and create charges server-side. 
+***
+
+*********************************************************** Payments **********************************************************
+Сomplete set of APIs to accept online payments
+***
+Payment process with Stripe
+***
+API for payments
+API for charges (зняття грошей з карточки покупця і зарахування на карточку продавці)
+***
+
+1. Collacting payment details
+   1.1 Checkout
+
+Checkout - payment forms
+Stripe's embedded (вбудований )payment form, Checkout, simplifies and secures online payment processing. 
+
+  The easiest way to integrate Stripe is via Checkout, an embedded tool that takes care of building an HTML form, validating user input, and securing your customers' card data. 
+  Using Checkout proces :
+  - sensitive credit card information is sent directly to Stripe, and does not touch your server. 
+  - stripe returns to your site a token representation of the card
+  - this token can then be used in a charge request.
+https://stripe.com/docs/checkout/tutorial
+
+Checkout, running in the browser, securely accepts the payment information but does not initiate a payment attempt. The actual charge request is triggered from your server.
+
+Checkout supports two different integrations:
+    - Simple: The simple integration provides a blue Pay with Card button as shown above. Upon completion of the payment form and receipt of the token, Checkout stores the token within a hidden input in your payment form and automatically submits the form for server-side use.
+    - Custom: The custom integration lets you create a custom button and passes a Stripe token to a JavaScript callback. Your JavaScript callback will need to send the token to your server for use.
+
+Tokens can be created with your publishable API key, which can safely be embedded in downloadable applications
+Your publishable API key identifies your website to Stripe during communications. Set your publishable key with setPublishableKey, after including Stripe.js and before making any requests to Stripe.
+
+   1.2 Stripe.js:
+    - <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+
+    Your publishable API key identifies your website to Stripe during communications. Set your publishable key with setPublishableKey, after including Stripe.js and before making any requests to Stripe.
+
+    - Stripe.setPublishableKey('pk_test_6pRNASCoBOKtIshFeQd4XMUh');
+
+2. Creating Charges
+
+ Stripe's API + your server-side code to process charges.
+
+Once you've securely collected and tokenized your customer's credit card using Checkout or Stripe.js, you can charge the card.
+Unlike collection, which occurs in the browser, charge attempts are made from your server, normally using one of our client libraries. 
+On your server, grab the Stripe token in the POST parameters submitted by your form. From there, it's one simple API call to charge the card:
+
+Stripe.apiKey = "sk_test_BQokikJOvBiI2HlWgH4olfQ2";
+
+Map<String, Object> chargeParams = new HashMap<String, Object>();
+chargeParams.put("amount", 2000);
+chargeParams.put("currency", "usd");
+Map<String, Object> sourceParams = new HashMap<String, Object>();
+sourceParams.put("number", "4242424242424242");
+sourceParams.put("exp_month", 9);
+sourceParams.put("exp_year", 2017);
+sourceParams.put("cvc", "314");
+chargeParams.put("source", sourceParams);
+chargeParams.put("description", "Charge for andrew.thomas@example.com");
+
+Charge.create(chargeParams);
+
+
+3. Fraud Protection
+
+Stripe offers integrated, automatic fraud protection for users of Stripe.js and Checkout.
+
+4. Dispute
+
+A dispute occurs when one of your customers questions your charge with their bank or credit card company. Banks usually ask customers for a reason for the dispute.
+
+*** Orders API + Tax and Shipping integrations
+Use the Orders API to sell and organize your products through Stripe. 
+
+If you’re dealing with physical or digital products, the Orders API helps you manage pricing and inventory, automatically calculate shipping costs and taxes, and create and pay for orders.
+
+
+******************************************* Connect - Stripe product *************************************************************
+
+Platform uses Stripe Connect to let sellers around the world get paid.
+
+Stripe Connect is for accepting money on behalf of others, and gaining access to their data. This functionality is available in every country Stripe supports.
+In general, if you’re building a platform or marketplace that needs to pay third-parties or building applications that help Stripe users do more with their account or their data, Connect is likely the right solution for you.
+
+Types of platform:
+
+* On-demand app implementation (Managed accounts)
+    First, understand that when you, the on-demand app creator, control the entire experience, you create managed accounts on behalf of your service providers. One of the most important considerations with managed accounts is that you are entirely responsible for providing the necessary information about your contractors, as Stripe will never interact with them. This means you must:
+    Address all necessary identity verification.
+    Establish the contractor’s bank account (for transfers).
+    Have your contractors agree to your terms of service.
+
+* Building a Store Builder: allowing other people to sell on your platform, like Squarespace or Bigcommerce. (Standalone  accounts)
+    Let’s look at how you’d implement this in detail. 
+    For the purpose of this recipe, let’s assume your users will:
+    Be able to log in to their Stripe account and view their Dashboard.
+    Each have their own independent shop, including their own checkout flows.
+    Be responsible for their own Stripe fees and chargebacks.
+
+Accounts types:
+
+ - A standalone Stripe account
+  is a normal Stripe account that is controlled directly by the account holder (i.e. your platform’s user). A user with a standalone account will have a relationship with Stripe, be able to log in to the dashboard, can process charges on their own, and can disconnect their account from your platform.
+  You can prompt your users to create Stripe accounts, or allow anyone who has an existing Stripe account to connect to your platform.
+
+- Managed accounts
+    A managed Stripe account will be almost completely invisible to the account holder and you will be responsible for all interactions with your user or collecting any information that Stripe needs. You will also have the ability to change most of the account’s settings, including the destination bank account, programmatically.
+
+***
+WOrking flow
+***
+
+1. Register your platform on your Dashboard (platform key)
+2. Create or connect to accounts for your users, for example sellers or service providers (account id)
+
+You’ll want to store the account ID and, if you intend to use them for authentication, the secret key and publishable key. The keys will not be retrievable subsequently.
+
+Once created, all account changes will be delivered via webhooks as an account.updated event. Be certain to establish a platform webhook URL in your account settings to watch for these.
+
+3. After that, you can charge credit cards, set up recurring billing, and take advantage of the rest of Stripe’s full API on behalf of your users.
+
+***
+Authentication with Connect
+***
+Learn how to authenticate as your users, so you can perform any API actions on their behalf. 
+
+2 approaches assumes you previously stored information about the connected account for later use:
+1. the Stripe account ID 
+The first, preferred, authentication option is to use your (the platform account’s) secret key and pass a Stripe-Account header identifying the connected account for which the request is being made.
+2. and/or the account’s secret and publishable keys.
+
+*******************************************************************************************************************************************************
+***
+Payments on user's behalf
+***
+
+There are two ways to create a charge on behalf of a connected account:
+
+ 1. Create the charge directly on the connected account ( stand alone Stripe accounts)
+
+  With this approach, the connected account is responsible for the fees, refunds, and chargebacks. 
+  The payment itself will appear as a charge in the connected account.
+
+  Processing a charge directly on a connected account requires authentication, best achieved by providing the platform account’s secret key and the Stripe-Account header identifying the connected account for which the request is being made.
+
+  To connect to standalone accounts—either if your users already have accounts or if you’d like them to create accounts—you’ll want to integrate with our standard OAuth flow:
+
+  When a user wants to connect to your platform, they’ll go through these steps:
+
+Starting on a page at your site, the user will click a link that takes them to Stripe, passing along your platform’s client_id.
+On Stripe’s website, the user will be prompted to connect their Stripe account, or create a new account if they don’t already have one.
+The user will then be redirected back to your site (specifically to your redirect_uri), passing along either an authorization code or an error (if the connection request was denied).
+Your site then makes a request to our OAuth token endpoint to fetch the user’s authorization credentials, storing them on your site.
+Subsequent API requests can be made on behalf of the connected account using the authorization credentials.
+
+
+ 2. Create the charge on the platform’s account, but set a destination parameter identifying the Stripe managed account that should receive the funds from the payment (  managing Stripe accounts)
+
+  This approach provides much more customizability but makes the platform account responsible for the fees, refunds, and chargebacks. The payment appears as a charge in the platform account, along with a transfer from the platform account to the connected account.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                              API
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+Stripe API:
+
+* organized around REST
+* support cross-origin resource sharing, allowing you to interact securely with our API from a client-side web application (though you should never expose your secret API key in any public website's client-side code)
+*  JSON is returned by all API responses, including errors, although our API libraries convert responses to appropriate language-specific objects (Java HashMap)
+* To make the API as explorable as possible, accounts have test mode and live mode API keys
+* All API requests must be made over HTTPS. 
+
+Auth:
+
+* Authenticate your account when using the API by including your secret API key in the request. You can manage your API keys in the Dashboard. 
+To use your API key, assign it to Stripe.apiKey. The Java library will then automatically send this key in each request.
+Stripe.apiKey = "sk_test_BQokikJOvBiI2HlWgH4olfQ2"; - your Stripe account api key
+
+Tokens can be created with your publishable API key, which can safely be embedded in downloadable applications
+Your publishable API key identifies your website to Stripe during communications. Set your publishable key with setPublishableKey, after including Stripe.js and before making any requests to Stripe.
+
+Tokens:
+
+* token that wraps the details of a credit card.
+This token can be used in place of a credit card Map with any API method.
+These tokens can only be used once: by creating a new charge object, or attaching them to a customer.
+
+* token that wraps the details of a bank account
+This token can be used in place of a bank account Map with any API method. 
+These tokens can only be used once: by attaching them to a recipient or managed account.
+
+***
+External Accounts
+***
+
+These External Accounts are transfer destinations on Account object of Stripe managed accounts. They can be bank accounts or debit cards.
+
+* Create a bank account
+The (account) bank_account object
+
+When you create a new bank account, you must specify a Stripe managed account to create it on.
+
+Stripe.apiKey = "sk_test_BQokikJOvBiI2HlWgH4olfQ2";
+
+//retrieve managed account -> managed: true
+Account account = Account.retrieve("acct_1032D82eZvKYlo2C", null);
+Map<String, Object> params = new HashMap<String, Object>();
+// attach token that wraps the details of a bank account to ourStripe managed account
+params.put("external_account", "btok_9BdKutOfaPUFu6");
+account.getExternalAccounts().create(params);
+
+* Create a card
+The (account) card object
+
+When you create a new credit card, you must specify a managed account to create it on.
