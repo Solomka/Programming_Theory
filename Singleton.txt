@@ -1,0 +1,72 @@
+Общие сведения
+Паттерн Singleton гарантирует, что у класса есть только один экземпляр, и предоставляет к нему глобальную точку доступа.
+
+https://habrahabr.ru/post/27108/
+http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
+https://habrahabr.ru/post/129494/
+
+http://www.javaworld.com/article/2074979/java-concurrency/double-checked-locking--clever--but-broken.html
+
+///
+threads:
+https://docs.oracle.com/javase/tutorial/essential/concurrency/liveness.html
+///
+
+Область применения
+1.) В системе должно существовать не более одного экземпляра заданного класса.
+2.) Экземпляр должен быть легко доступен для всех клиентов данного класса. 
+3.) Создание объекта on demand, то есть, когда он понадобится первый раз, а не во время инициализации системы.
+
+Synchronization is built around an internal entity known as the intrinsic lock or monitor lock. (The API specification often refers to this entity simply as a "monitor.") Intrinsic locks play a role in both aspects of synchronization: enforcing exclusive access to an object's state and establishing happens-before relationships that are essential to visibility.
+
+Every object has an intrinsic lock associated with it. By convention, a thread that needs exclusive and consistent access to an object's fields has to acquire the object's intrinsic lock before accessing them, and then release the intrinsic lock when it's done with them.
+
+Another way to create synchronized code is with synchronized statements. Unlike synchronized methods, synchronized statements must specify the object that provides the intrinsic lock:
+
+public void addName(String name) {
+// define the intrinsic lock - inner object of Singleton object
+    synchronized(this) {
+        lastName = name;
+        nameCount++;
+    }
+    nameList.add(name);
+}
+
+!!!!!!!!!!!!!!!!!!
+http://javarevisited.blogspot.com/2014/05/double-checked-locking-on-singleton-in-java.html
+***
+Проблема идиомы Double Checked Lock заключается в модели памяти Java
+***
+
+Here is how double checked locking looks like in Java
+
+Read more: http://javarevisited.blogspot.com/2014/05/double-checked-locking-on-singleton-in-java.html#ixzz4W9j7Bwic
+
+Here is how double checked locking looks like in Java
+
+public static Singleton getInstanceDC() {
+ if (_instance == null) {  // Single Checked 
+ synchronized (Singleton.class) { 
+ if (_instance == null) { // Double checked 
+ _instance = new Singleton(); 
+ } 
+ } 
+ } return _instance; }
+
+ On surface this method looks perfect, as you only need to pay price for synchronized block one time, but it still broken, until you make _instance variable volatile.
+
+Without volatile modifier it's possible for another thread in Java to see half initialized state of _instance variable, but with volatile variable guaranteeing happens-before relationship, all the write will happen on volatile _instance before any read of _instance variable.
+
+Anyway,  the volatile keyword in Java is used as an indicator to Java compiler and Thread that do not cache value of this variable and always read it from main memory. So if you want to share any variable in which read and write operation is atomic by implementation e.g. read and write in an int or a boolean variable then  you can declare them as volatile variable.
+
+The Java volatile keyword cannot be used with method or class and it can only be used with a variable. Java volatile keyword also guarantees visibility and ordering, after Java 5 write to any volatile variable happens before any read into the volatile variable. By the way use of volatile keyword also prevents compiler or JVM from the reordering of code or moving away them from synchronization barrier.
+
+Read more: http://javarevisited.blogspot.com/2011/06/volatile-keyword-java-example-tutorial.html#ixzz4W9lBHNB1
+
+
+Можно выделить следующие короткие советы по использованию того или иного подхода для реализации шаблона “Одиночка” [1].
+
+1) Использовать нормальную (не ленивую) инициализацию везде где это возможно;
+2) Для статических полей использовать On Demand Holder idom;
+3) Для простых полей использовать Double Chedked Lock & volatile idom;
+4) Во всех остальных случаях использовать Syncronized accessor;
