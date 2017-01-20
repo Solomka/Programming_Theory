@@ -1,0 +1,99 @@
+***
+1. Why String is immutable(Final) in Java
+***
+
+public final class String
+extends Object
+implements Serializable, Comparable<String>, CharSequence
+
+***
+
+Important and popularity of String as data type, transfer object and mediator has also made it popular in Java interviews. Why String is immutable in Java is one of the most frequently asked String Interview questions in Java, which starts with discussion of,  what is String, how String in Java is different than String in C and C++, and then shifted towards what is immutable object in Java , what are the benefits of immutable object, why do you use them and which scenarios should you use them. This question sometimes also asked, "Why String is final in Java".
+
+
+On a similar note, if you are preparing for Java interviews, I would suggest you take a loot at the Java Programming interview exposed book, an excellent resource for senior and mid-level Java programmer. It contains questions from all important Java topic including multi-threading, collection, GC, JVM internals and framework like Spring and Hibernate
+
+***
+String pool
+***
+
+This prints true (even though we don't use equals method: correct way to compare strings)
+
+    String s = "a" + "bc";
+    String t = "ab" + "c";
+    System.out.println(s == t);
+
+When compiler optimizes your string literals, it sees that both s and t have same value and thus you need only one string object. It's safe because String is immutable in Java.
+As result, both s and t point to the same object and some little memory saved.
+
+Name 'string pool' comes from the idea that all already defined string are stored in some 'pool' and before creating new String object compiler checks if such string is already defined.
+
+***
+
+Another reason of why String class is immutable could die due to HashMap.
+
+Since Strings are very popular as HashMap key, it's important for them to be immutable so that they can retrieve the value object which was stored in HashMap. Since HashMap works in the principle of hashing, which requires same has value to function properly. Mutable String would produce two different hashcodes at the time of insertion and retrieval if contents of String was modified after insertion, potentially losing the value object in the map.
+
+Answer:
+
+1) Imagine String pool facility without making string immutable , its not possible at all because in case of string pool one string object/literal e.g. "Test" has referenced by many reference variables, so if any one of them change the value others will be automatically gets affected i.e. lets say
+
+String A = "Test"
+String B = "Test"
+
+Now String B called, "Test".toUpperCase() which change the same object into "TEST", so A will also be "TEST" which is not desirable. Here is a nice diagram which shows how String literals are created in heap memory and String literal pool.
+
+2) String has been widely used as parameter for many Java classes e.g. for opening network connection, you can pass hostname and port number as string, you can pass database URL as a string for opening database connection, you can open any file in Java by passing the name of the file as argument to File I/O classes.
+
+In case, if String is not immutable, this would lead serious security threat, I mean someone can access to any file for which he has authorization, and then can change the file name either deliberately or accidentally and gain access to that file. Because of immutability, you don't need to worry about that kind of threats. This reason also gels with, Why String is final in Java, by making java.lang.String final, Java designer ensured that no one overrides any behavior of String class.
+
+3)Since String is immutable it can safely share between many threads which is very important for multithreaded programming and to avoid any synchronization issues in Java, Immutability also makes String instance thread-safe in Java, means you don't need to synchronize String operation externally. Another important point to note about String is the memory leak caused by SubString, which is not a thread related issues but something to be aware of.
+
+4) Another reason of Why String is immutable in Java is to allow String to cache its hashcode, being immutable String in Java caches its hashcode, and do not calculate every time we call hashcode method of String, which makes it very fast as hashmap key to be used in hashmap in Java.  This one is also suggested by  Jaroslav Sedlacek in comments below. In short because String is immutable, no one can change its contents once created which guarantees hashCode of String to be same on multiple invocations.
+
+5) Another good reason of Why String is immutable in Java suggested by Dan Bergh Johnsson on comments is: The absolutely most important reason that String is immutable is that it is used by the class loading mechanism, and thus have profound and fundamental security aspects. Had String been mutable, a request to load "java.io.Writer" could have been changed to load "mil.vogoon.DiskErasingWriter"
+
+***
+2. Why multiple inheritances are not supported in Java
+***
+
+1) First reason is ambiguity around Diamond problem, consider a class A has foo() method and then B and C derived from A and has there own foo() implementation and now class D derive from B and C using multiple inheritance and if we refer just foo() compiler will not be able to decide which foo() it should invoke. This is also called Diamond problem because structure on this inheritance scenario is similar to 4 edge diamond, see below
+
+           A foo()
+           / \
+          /   \
+   foo() B     C foo()
+          \   /
+           \ /
+            D
+           foo()
+
+In my opinion even if we remove the top head of diamond class A and allow multiple inheritances we will see this problem of ambiguity.
+
+
+Some times if you give this reason to interviewer he asks if C++ can support multiple inheritance than why not Java. hmmmmm in that case I would try to explain him the second reason which I have given below that its not because of technical difficulty but more to maintainable and clearer design was driving factor though this can only be confirmed by any of java designer and we can just speculate. Wikipedia link has some good explanation on how different language address problem arises due to diamond problem while using multiple inheritances.
+
+2) Second and more convincing reason to me is that multiple inheritances does complicate the design and creates problem during casting, constructor chaining etc and given that there are not many scenario on which you need multiple inheritance its wise decision to omit it for the sake of simplicity. Also java avoids this ambiguity by supporting single inheritance with interfaces. Since interface only have method declaration and doesn't provide any implementation there will only be just one implementation of specific method hence there would not be any ambiguity.
+
+***
+3. How to create Immutable Class and Object in Java 
+***
+
+Writing or creating immutable classes in Java is becoming popular day by day, because of concurrency and multithreading advantage provided by immutable objects. Immutable objects offers several benefits over conventional mutable object, especially while creating concurrent Java application. Immutable object not only guarantees safe publication of object’s state, but also can be shared among other threads without any external synchronization. In fact JDK itself contains several immutable classes like String, Integer and other wrapper classes.
+
+By the way, if your Immutable class has lots of optional and mandatory fields, then you can also use Builder design pattern to make a class Immutable in Java.
+
+***
+if clone is shalloed() ?
+***
+Yes, but overwrite it
+
+The default Object.clone() is indeed a shallow copy. However, it's designed to throw a CloneNotSupportedException unless your object implements Cloneable.
+
+And when you implement Cloneable, you should override clone() to make it do a deep copy, by calling clone() on all fields that are themselves cloneable.
+
+Read:
+
+Java Programming interview exposed  Noel Markham
+
+http://javarevisited.blogspot.sg/2015/10/133-java-interview-questions-answers-from-last-5-years.html
