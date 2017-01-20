@@ -906,3 +906,259 @@ NP-повна задача (англ. NP-complete) — в теорії алго�
 
 c0 + c1x + c2x^2 + ... + cnx^n,
 де ci - сталі коефіцієнти (константи), x - змінна
+
+*** HashSet/HashMap and TreeSet/TreeMap
+
+* HashSet -> HashMap - based implementation of Set
+* TreeSet -> TreeMap - based implementation of  NavigableSet
+
+* HashMap -> HashTable - based implementation of Map
+* TreeMap -> Red-Black Tree - based implementation of NavigableMap 
+
+***
+How does the HashMap work ?
+***
+
+HashMap in Java works on hashing principle. It is a data structure which allows us to store object and retrieve it in constant time O(1) provided we know the key.
+
+When we call put method, hashcode() method of the key object is called so that hash function of the map can find a bucket location to store value object, which is actually an index of the internal array, known as the table. 
+
+Вирішення колізій:
+
+Колізії. Два різних ключі при хешуванні дають однаковий індекс.
+Birthday problem – говорить нам, що ми не можемо уникнути колізії (лише маючи квадратичний розмір пам’яті)
+Coupon collector + load balancing – колізії рівномірно розподілені
+Вихід … необхідно ефективно вирішувати колізії.
+
+хеш-ф-я для 2 різних ключів повертає одне й те ж значення (одну комірку масиву)
+
+1 Рішення: роздільне зв’язування (separate chaining)
+
+Використовувати масив M<N зв’язних списків
+
+Алгоритм:
+Hash: отримати число int i між 0 і М-1
+Insert: розмістити на початок і-того зв’язного списку (якщо вже не в ньому)
+Search: шукаємо елемент в і-тому зв’язному списку
+
+Since the internal array of HashMap is of fixed size, and if you keep storing objects, at some point of time hash function will return same bucket location for two different keys, this is called collision in HashMap. In this case, a linked list is formed at that bucket location and a new entry is stored as next node.
+
+If we try to retrieve an object from this linked list, we need an extra check to search correct value, this is done by equals() method. Since each node contains an entry, HashMap keeps comparing entry's key object with the passed key using equals() and when it return true, Map returns the corresponding value.
+
+
+2. Рішення: open addressing
+Коли новий ключ отримує колізію (комріка вже зайнята) шукаємо наступну порожню комірку і розміщуємо значення в неї
+
+3. Рішення: лінійне наближення (linear probing)
+
+Алгоритм:
+Hash: отримати число int i між 0 і М-1
+Insert: розмістити в масив під індексом i якщо вільна, якщо ні спробувати і+1, і+2, …
+
+Separate chaining:
+легше реалізувати видалення
+продуктивність падає поступово
+кластеризація менш чутлива до погано розробленої хеш функції
+
+Linear probing
+менше змарнованого місця
+простіше реалізувати кешування
+
+Хеш таблиці:
+
+простіше програмуються
+немає іншої ефективнішої альтернативи для невпорядкованих ключів
+швидкі для простих ключів (декілька арифметичних операцій, замість logN порівнянь)
+краща системна підтримка в Java для стрічок 
+
+Збалансовані дерева пошуку:
+
+краща гарантія продуктивності
+підтримка впорядкованих операцій
+простіше реалізувати compareTo() чим equals() + hashCode()
+
+Java включає реалізацію обох підходів:
+
+Червоно-чорні збалансовані дерева: TreeMap, TreeSet
+Хеш таблиці: HashMap, IdentityHashMap
+
+* equals() and hashCode() contract  that two unequal objects in Java can have same hashcode.
+
+To read:
+Data Structures and Algorithm Analysis in Java (3rd Edition) 3rd Edition
+by Mark A. Weiss (Author)
+
+***
+HashMap vs HashTable
+***
+
+Though both Hashtable and HashMap are data-structure based upon hashing and implementation of Map interface, the main difference between them is that HashMap is not thread-safe but Hashtable is thread-safe. Which means you cannot use HashMap in multi-threaded Java application without external synchronization. Another difference is HashMap allows one null key and null values but Hashtable doesn't allow null key or values. Also, thread-safety of the hash table is achieved using internal synchronization, which makes it slower than HashMap. By the way, difference between HashMap and Hashtable in Java is one of the frequently asked in core Java interviews to check whether the candidate understands correct usage of collection classes and aware of alternative solutions available.
+
+Along with How HashMap internally works in Java and ArrayList vs Vector, this  is one of the oldest questions from Collection framework in Java. Hashtable is a legacy Collection class and it's there in Java API from a long time but it got refactored to implement Map interface in Java 4 and from there Hashtable became part of Java Collection framework.
+
+
+Difference between HashMap and Hashtable in Java
+
+Both HashMap and Hashtable implements Map interface but there is some significant difference between them which is important to remember before deciding whether to use HashMap or Hashtable in Java. Some of them are thread-safety, synchronization, and speed. here are those differences :
+
+1.The HashMap class is roughly equivalent to Hashtable, except that it is non-synchronized and permits nulls. (HashMap allows null values as key and value whereas Hashtable doesn't allow nulls).
+
+2. One of the major differences between HashMap and Hashtable is that HashMap is non-synchronized whereas Hashtable is synchronized, which means Hashtable is thread-safe and can be shared between multiple threads but HashMap can not be shared between multiple threads without proper synchronization. Java 5 introduces ConcurrentHashMap which is an alternative of Hashtable and provides better scalability than Hashtable in Java.
+
+HashMap vs Hashtable in Java
+
+3. Another significant difference between HashMap vs Hashtable is that Iterator in the HashMap is  a fail-fast iterator  while the enumerator for the Hashtable is not and throw ConcurrentModificationException if any other Thread modifies the map structurally  by adding or removing any element except Iterator's own remove() method. But this is not a guaranteed behavior and will be done by JVM on best effort. This is also an important difference between Enumeration and Iterator in Java.
+
+4. One more notable difference between Hashtable and HashMap is that because of thread-safety and synchronization Hashtable is much slower than HashMap if used in Single threaded environment. So if you don't need synchronization and HashMap are only used by one thread, it outperforms Hashtable in Java.
+
+5. HashMap does not guarantee that the order of the map will remain constant over time.
+
+HashMap and Hashtable : note on Some Important Terms
+
+1)Synchronized means only one Thread can modify a hash table at one point of time. Basically, it means that any thread before performing an update on a Hashtable will have to acquire a lock on the object while others will wait for the lock to be released.
+
+2) Fail-safe is relevant from the context of iterators. If an Iterator or ListIterator has been created on a collection object and some other thread tries to modify the collection object "structurally", a concurrent modification exception will be thrown. It is possible for other threads though to invoke "set" method since it doesn't modify the collection "structurally". However, if prior to calling "set", the collection has been modified structurally, "IllegalArgumentException" will be thrown.
+
+Difference between HashMap and Hashtable in Java
+
+
+
+
+3) Structurally modification means deleting or inserting element which could effectively change the structure of the map.
+
+HashMap can be synchronized by
+
+Map m = Collections.synchronizeMap(hashMap);
+
+In Summary, there are significant differences between Hashtable and HashMap in Java e.g. thread-safety and speed and based upon that only use Hashtable if you absolutely need thread-safety if you are running Java 5 consider using ConcurrentHashMap in Java.
+
+***
+What is difference between Enumeration and Iterator in Java?
+***
+
+Both Iterator and Enumeration provides way to traverse or navigate through entire collection in Java.
+
+Between Enumeration and Iterator, Enumeration is older and its there from JDK1.0, while iterator was introduced later. Iterator can be used with ArrayList, HashSet and other collection classes.  Another similarity between Iterator and Enumeration in Java is that  functionality of Enumeration interface is duplicated by the Iterator interface.
+
+1. Iterator also allows you to remove elements from collection during traversal but Enumeration doesn't allow that, it doesn't got the remove() method. 
+
+2. Enumeration is also a legacy class and not all Collection supports it e.g. Vector supports Enumeration but ArrayList doesn't. 
+
+3. Only major difference between Enumeration and iterator is Iterator has a remove() method while Enumeration doesn't. Enumeration acts as Read-only interface, because it has the methods only to traverse and fetch the objects, where as by using Iterator we can manipulate the objects like adding and removing the objects from collection e.g. Arraylist.
+
+4. 
+Also Iterator is more secure and safe as compared to Enumeration because it  does not allow other thread to modify the collection object while some thread is iterating over it and throws ConcurrentModificationException. This is by far most important fact for me for deciding between Iterator vs Enumeration in Java.
+
+
+In Summary both Enumeration and Iterator will give successive elements, but Iterator is new and improved version where method names are shorter, and has new method called remove. Here is a short comparison:
+
+Enumeration
+hasMoreElement()
+nextElement()
+N/A
+
+
+Iterator
+hasNext()
+next()
+remove()
+
+So Enumeration is used when ever we want to make Collection objects as Read-only.
+
+*** 
+Vector
+
+differences between Vector and ArrayList
+***
+
+Unlike the new collection implementations, Vector is synchronized. If a thread-safe implementation is not needed, it is recommended to use ArrayList in place of Vector.
+
+* Similarities between these two and why we can use ArrayList in place of Vector on certain scenario.
+
+ArrayList vs Vector in Java1) Vector and ArrayList are index based and backed up by an array internally.
+2) Both ArrayList and Vector maintains the insertion order of element. Means you can assume that you will get the object in the order you have inserted if you iterate over ArrayList or Vector.
+3) Both Iterator and ListIterator returned by ArrayList and Vector are fail-fast.
+4) ArrayList and Vector also allows null and duplicates.
+
+Vector vs ArrayList in Java
+
+Now let's see some key difference between Vector and ArrayList in Java, this will decide when is the right time to use Vector over ArrayList and vice-versa. Differences are based upon properties like synchronization, thread safety, speed, performance , navigation and Iteration over List etc.
+
+1) Synchronization and thread-safety
+
+First and foremost difference between Vector and ArrayList is that Vector is synchronized and ArrayList is not, what it means is that all the method which structurally modifies Vector e.g. add () or remove () are synchronized which makes it thread-safe and allows it to be used safely in a multi-threaded and concurrent environment. On the other hand ArrayList methods are not synchronized thus not suitable for use in multi-threaded environment. This is also a popular interview question on thread, where people ask why ArrayList can not be shared between multiple threads.
+
+2) Speed and Performance
+
+ArrayList is way faster than Vector. Since Vector is synchronized and thread-safe it pays price of synchronization which makes it little slow. On the other hand ArrayList is not synchronized and fast which makes it obvious choice in a single-threaded access environment. You can also use ArrayList in a multi-threaded environment if multiple threads are only reading values from ArrayList or you can create read only ArrayList as well.
+
+3) Capacity
+
+Whenever Vector crossed the threshold specified it increases itself by value specified in capacityIncrement field while you can increase size of ArrayList by calling ensureCapacity () method.
+4) Enumeration and Iterator
+
+Vector can return enumeration of items it hold by calling elements () method which is not fail-fast as opposed to Iterator and ListIterator returned by ArrayList. I have discussed this point in detail on my post What is difference between Iterator and Enumeration, you can also look there.
+
+5) Legacy
+
+Another point worth to remember is Vector is one of those classes which comes with JDK 1.0 and initially not part of Collection framework but in later version it's been re-factored to  implement List interface so that it could become part of collection framework
+
+After considering these points about both Vector and ArrayList , my conclusion is use ArrayList wherever possible and avoids use of Vector until you have no choice. Think for CopyOnWriteArrayList  over Vector, if you have multiple readers and few writers because it can provide thread-safety without impacting performance too much.
+
+***
+Difference between LinkedList vs ArrayList in Java
+***
+
+Main difference between ArrayList and LinkedList is that ArrayList is implemented using re sizable array while LinkedList is implemented using doubly LinkedList. ArrayList is more popular among Java programmer than LinkedList as there are few scenarios on which LinkedList is a suitable collection than ArrayList. 
+
+LinkedList vs ArrayList in Java
+
+Difference between LinkedList and ArrayList in JavaAll the differences between LinkedList and ArrayList has there root on difference between Array and LinkedList data-structure. If you are familiar with Array and LinkedList data structure you will most likely derive following differences between them:
+
+1) Since Array is an index based data-structure searching or getting element from Array with index is pretty fast. Array provides O(1) performance for get(index) method but remove is costly in ArrayList as you need to rearrange all elements. On the Other hand LinkedList doesn't provide Random or index based access and you need to iterate over linked list to retrieve any element which is of order O(n).
+
+2) Insertions  are easy and fast in LinkedList as compared to ArrayList because there is no risk of resizing array
+and copying content to new array if array gets full which makes adding into ArrayList of O(n) in worst case, while adding is O(1) operation in LinkedList in Java. ArrayList also needs to update its index if you insert something anywhere except at the end of array.
+
+3) Removal is like insertions better in LinkedList than ArrayList.
+
+4) LinkedList has more memory overhead than ArrayList because in ArrayList each index only holds actual object (data) but in case of LinkedList each node holds both data and address of next  and previous node.
+
+Існує дві основні різновиди List:
+Базовий контейнер ArrayList, оптимізований для довільного доступу до елементів, але з відносно повільними операціями вставки(видалення) елементів в середині списку.
+
+Контейнер LinkedList, оптимізований для послідовного доступу, з швидкими операціями вставки (видалення) у середині списку;
+Довільний доступ до елементів LinkedList виконується відносно повільно, але по широті можливостей він перевершує ArrayList.
+
+When to use LinkedList and ArrayList in Java
+
+As I said LinkedList is not as popular as ArrayList but still there are situation where a LinkedList is better choice than ArrayList in Java. Use LinkedList in Java if:
+
+1) Your application can live without Random access. Because if you need nth element in LinkedList you need to first traverse up to nth element O(n) and than you get data from that node.
+
+2) Your application is more insertion and deletion driver and you insert or remove more than retrieval. Since insertion or
+removal doesn't involve resizing its much faster than ArrayList.
+
+That’s all on difference between ArrayList and LinkedList in Java. Use ArrayList in Java for all there situation where you need a non-synchronized index based access. ArrayList is fast and easy to use, just try to minimize array resizing by constructing arraylist with proper initial size.
+
+***
+Difference between List and Set in Java Collection
+***
+
+
+1) Fundamental difference between List and Set in Java is allowing duplicate elements. List in Java allows duplicates while Set doesn't allow any duplicate. If you insert duplicate in Set it will replace the older value. Any implementation of Set in Java will only contains unique elements.
+
+2) Another significant difference between List and Set in Java is order. List is an Ordered Collection while Set is an unordered Collection. List maintains insertion order of elements, means any element which is inserted before will go on lower index than any element which is inserted after. Set in Java doesn't  maintain any order. Though Set provide another alternative called SortedSet which can store Set elements in specific Sorting order defined by Comparable and Comparator methods of Objects stored in Set.
+
+3) Set uses equals() method to check uniqueness of elements stored in Set, while SortedSet uses compareTo() method to implement natural sorting order of elements. In order for an element to behave properly in Set and SortedSet, equals and compareTo must be consistent to each other.
+
+4) Popular implementation of List interface in Java includes ArrayList, Vector and LinkedList. While popular implementation of Set interface includes HashSet, TreeSet and LinkedHashSet.
+
+When to use List and Set in Java:
+
+its pretty clear that if you need to maintain insertion order or object and you collection can contain duplicates than List is a way to go. On the other hand if your requirement is to maintain unique collection without any duplicates than Set is the way to go.
+
+Important point to note is that both List and Set are derived from Collection Interface. In short main difference between List and Set in Java is that List is an ordered collection which allows duplicates while Set is an unordered collection which doesn't allow duplicates.
+
+
+
