@@ -1,0 +1,113 @@
+                                                                                ***
+                                                                                MySQL commands
+                                                                                ***
+
+MySQL is a database server (which comes with a command line client for it)
+PHPMyAdmin is a (web application) client for MySQL.
+
+
+
+MySql is server where your commands get executed and returns you data, It manages all about data while PhpMyAdmin is a web Application, with user friendly, easy to use GUI makes it easy to handle database, which is difficult to use on command line. So this will write and run commands for you on MySql server for you.
+
+phpMyAdmin does not have same data as MySQL command line?
+
+Sounds like you have MAMP's version of MySQL and a standalone MySQL. 
+
+How can I access the MySQL command line with XAMPP for Windows?
+
+Your MySQL binaries should be somewhere under your XAMPP folder. Look for a /bin folder, and you'll find the mysql.exe client around. Let's assume it is in c:\xampp\mysql\bin, then you should fireup a command prompt in this folder.
+
+That means, fire up "cmd", and type:
+
+cd c:\xampp\mysql\bin
+mysql.exe -u root -p
+If you want to use mysqldump.exe, you should also find it there.
+
+Log into your mysql server, and start typing your commands.
+
+***
+XAMP
+***
+
+A web server is a computer system that processes requests via HTTP, the basic network protocol used to distribute information on the World Wide Web. The term can refer to the entire system, or specifically to the software that accepts and supervises the HTTP requests.
+
+XAMPP (/ˈzæmp/ or /ˈɛks.æmp/[2]) is a free and open source cross-platform web server solution stack package developed by Apache Friends,[2] consisting mainly of the Apache HTTP Server, MySQL database, and interpreters for scripts written in the PHP and Perl programming languages.
+
+
+
+
+create database Db1
+use Db1
+show databases;
+SELECT DATABASE(); - which db is current one
+show tables;
+exit;
+
+Основні оператори DDL:
+
+CREATE DOMAIN
+CREATE TABLE
+CREATE VIEW
+(CREATE INDEX)
+
+
+ALTER DOMAIN
+ALTER TABLE
+
+
+DROP DOMAIN
+DROP TABLE
+DROP VIEW
+(DROP INDEX)
+
+
+Створення таблиці:
+
+CREATE TABLE TableName
+{ (columName dataType [NOT NULL] [UNIQUE]
+[DEFAULT defaultOption] [CHECK (searchCondition)]  [,…] }
+[PRIMARY KEY (listOfColumns), ]
+{ [UNIQUE (listOfColumns),]  [,…] }
+{ [FOREIGN KEY (listOfForeignKeyColumns)
+REFERENCES ParentTableName [(listOfCandidateKeyColuims)] ,
+[MATCH {PARTIAL | FULL}
+[ON UPDATE referentialAction]
+[ON DELETE referentialAction] ]  [,…] }
+{[CHECK (searchCoodltion)] [,…] } )
+
+
+Визначення доменів: 
+CREATE DOMAIN domainName [AS] dataType
+[DEFAULT defaultOption]
+[CHECK (searchCoridition)]
+
+
+Приклад створення таблиці читачів з бази даних про бібліотеку.
+CREATE TABLE READERS
+(
+    READER_ID   SMALLINT    NOT NULL,
+    FIRST_NAME  CHAR (30)       NOT NULL,
+    LAST_NAME   CHAR (30)   NOT NULL,
+    ADDRES  CHAR (50),
+    HOME_PHONE  CHAR (12),
+    WORK_PHONE  CHAR (12),
+    BIRTH_DAY   DATE          CHECK(BIRTH_DAY<=YEAR(CURRENT_DATE)),
+    PRIMARY_KEY READER_ID,
+    CONSTRAINT CK_READERS CHECK (HOME_PHONE IS NOT NULL OR WORK_PHONE IS NOT NULL)
+);
+
+
+Приклад створення таблиці примірників з бази даних про бібліотеку.
+
+CREATE TABLE EXEMPLAR
+(
+    ID_EXEMPLAR     INT     NOT NULL,
+    ISBN    VARCHAR (14)        NOT NULL,
+    READER_ID   SMALLINT (4)    NULL,
+    DATA_IN DATE,
+    DATA_OUT    DATE,
+    EXIST   LOGICAL,
+    PRIMARY_KEY (ID_EXEMPLAR),
+    FOREIGN KEY     (ISBN)      REFERENCES    BOOKS (ISBN),
+    FOREIGN KEY     (READER_ID)     REFERENCES    READERS (READER_ID)
+);
