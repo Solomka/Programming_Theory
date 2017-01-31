@@ -1,0 +1,8 @@
+/*
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("e:/guf.txt")));
+        oos.writeObject(new Point(20,50));
+        oos.close();
+*/
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("e:/guf.txt")));
+        Point p = (Point) ois.readObject();
+        System.out.println("Point: " + p);

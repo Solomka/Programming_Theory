@@ -1,0 +1,49 @@
+***
+ I: with additional custom functionality added 
+***
+
+@Transactional(readOnly = true)
+public interface DeliveryRepository extends JpaRepository<Delivery, Long>{
+    
+     @Query("<JPQ statement here>")
+  List<Delivery> findByCustomer(Customer customer);
+}
+
+class DeliveryRepoIml implements DeliveryRepository;
+
+***
+ II: with additional custom functionality added (bred)
+***
+
+public interface DeliveryCustomRepo;
+public interface DeliveryRepository extends JpaRepository<Delivery, Long>, DeliveryCustomRepo;
+
+class DeliveryRepoIml implements DeliveryRepository;
+
+***
+ III: with main repo methods Hibernate realization - !!!!!!!!!!!!!!!!!!!!!!!!!!!
+***
+
+public interface DeliveryRepository extends JpaRepository<Delivery, Long>;
+
+@Repository
+public DeliveryRepoImpl extends AHRepo implements DeliveryRepository
+
+***********************************
+
+****
+public interface AccountRepositoryCustom {
+    public void customMethod();
+}
+
+public interface AccountRepository 
+    extends JpaRepository<Account, Long>, AccountRepositoryCustom { ... }
+
+ public class AccountRepositoryImpl implements AccountRepositoryCustom {
+
+    @Autowired
+    AccountRepository accountRepository;  /* Optional - if you need it */
+
+    public void customMethod() { ... }
+}
+

@@ -73,3 +73,7 @@ FetchType.EAGER = Loads ALL relationships
 
  @OneToMany and @ManyToMany associations are defaulted to LAZY loading; 
  @OneToOne and @ManyToOne are defaulted to EAGER loading. 
+
+ ******************************************************************************************************************************************
+                                                                Hibernate
+ ******************************************************************************************************************************************
