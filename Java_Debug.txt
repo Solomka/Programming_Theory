@@ -2,3 +2,27 @@ F5 - Executes the currently selected line and goes to the next line in your prog
 F6 - steps over the call, i.e. it executes a method without stepping into it in the debugger.
 F7 - steps out to the caller of the currently executed method. This finishes the execution of the current method and returns to the caller of this method.
 F8 - tells the Eclipse debugger to resume(продовжувати)the execution of the program code until is reaches the next breakpoint or watchpoint.
+
+/**
+Мітки в Java
+**/
+outer:
+            for (int i = 0; i < functionBody.length(); ++i) {
+                char curr = functionBody.charAt(i);
+                if (curr == ',') {
+                    if (paranthesesCounter == 0) {
+                        args.add(fromStringToTerm(arg));
+                        arg = "";
+                        continue;
+                    } 
+                } else if (curr == ')') {
+                    paranthesesCounter--;
+                    
+                } else if (curr == '(') {
+                    paranthesesCounter++;
+                                    }               
+                arg += curr;
+
+            }
+
+            break outer;
