@@ -1,0 +1,292 @@
+***
+
+RESTful web services
+
+REST - це архітектура побудови веб-застосунку (service)
+Web service design model
+
+***
+
+While REST stands for Representational State Transfer, which is an architectural style for networked hypermedia applications, 
+it is primarily used to build Web services that are lightweight, maintainable, and scalable.
+
+ A service based on REST is called a RESTful service.
+
+ REST is not dependent on any protocol, but almost every RESTful service uses HTTP as its underlying protocol. 
+
+ 
+ Every system uses resources. These resources can be pictures, video files, Web pages, business information, or anything that can be represented in a computer-based system. 
+
+ The purpose of a service is to provide a window to its clients so that they can access these resources.
+
+ Service architects and developers want this service to be easy to implement, maintainable, extensible, and scalable. A RESTful design promises that and more. 
+
+RESTful services should have following properties and features:
+
+1. Representations (JSON data format)
+2. Messages (HTTP requests) - The client and service talk to each other via messages. Clients send a request to the server, and the server replies with a response.
+3. URIs (REST requires each resource to have at least one URI)
+4. Uniform interface (RESTful systems have a uniform interface. HTTP 1.1 provides a set of methods, called verbs, for this purpose) 
+REST recommends a uniform interface and HTTP provides you that uniform interface
+5. Stateless
+6. Links between resources
+7. Caching
+
+Web service follows four basic design principles:
+
+- Use HTTP methods explicitly.
+- Be stateless.
+- Expose directory structure-like URIs.
+- Transfer XML, JavaScript Object Notation (JSON), or both.
+
+Process:
+
+-resource - noun - resource URI
+-access this resource - verb - HTTP method
+-accept info of the resource in the appropriate form - JSON
+
+***
+Representations (представлення)
+***
+
+The focus of a RESTful service is on resources and how to provide access to these resources. A resource can easily be thought of as an object as in OOP. A resource can consist of other resources. While designing a system, the first thing to do is identify the resources and determine how they are related to each other. This is similar to the first step of designing a database: Identify entities and relations.
+
+Once we have identified our resources, the next thing we need is to find a way to represent these resources in our system.
+
+For example, depending on your requirement, you can decide to use JSON or XML. If you are building Web services that will be used by Web pages for AJAX calls, then JSON is a good choice. 
+
+JSON representation of a resource:
+
+{
+    "ID": "1",
+    "Name": "M Vaqqas",
+    "Email": "m.vaqqas@gmail.com",
+    "Country": "India"
+}
+
+A good representation should have some obvious qualities:
+
+1. Both client and server should be able to comprehend this format of representation.
+
+2. A representation should be able to completely represent a resource. If there is a need to partially represent a resource, then you should think about breaking this resource into child resources. Dividing big resources into smaller ones also allows you to transfer a smaller representation. Smaller representations mean less time required to create and transfer them, which means faster services.
+
+3. The representation should be capable of linking resources to each other. This can be done by placing the URI or unique ID of the related resource in a representation (more on this in the coming sections).
+
+***
+
+Messages
+
+***
+
+ The client and service talk to each other via messages.
+ Clients send a request to the server, and the server replies with a response. 
+ Apart from the actual data, these messages also contain some metadata about the message. It is important to have some background about the HTTP 1.1 request and response formats for designing RESTful Web services.
+
+***
+Addressing Resources
+***
+
+REST requires each resource to have at least one URI.
+
+The job of a URI is to identify a resource or a collection of resources.
+
+The actual operation is determined by an HTTP verb.The URI should not say anything about the operation or action. This enables us to call the same URI with different HTTP verbs to perform different operations.
+
+http://MyService/Persons/1
+
+This URL has following format: Protocol://ServiceName/ResourceType/ResourceID
+
+Query parameter:
+
+http://MyService/Persons?id=1
+
+You should use query parameters only for the use they are intended for: providing parameter values to a process.
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+********************************************* HTTP METHODS *****************************************************
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+***
+
+Uniform Interface
+
+***
+RESTful systems should have a uniform interface. HTTP 1.1 provides a set of methods, called verbs, for this purpose. Among these the more important verbs are:
+
+HTTP 1.1 methods, verbs:
+
+GET - READ - Safe
+POST - CREATE/UPDATE- N/A
+PUT - UPDATE/CREATE - Idempotent
+DELETE - DELETE - Idempotent
+OPTIONS - List the allowed operations on a resource - Safe
+HEAD - Return only the response headers and no response body - Safe
+
+* Safe operation  - does not have any effect on the original value of the resource
+
+For example, the mathematical operation "divide by 1" is a safe operation because no matter how many times you divide a number by 1, !!! the original value will not change !!!
+
+* Idempotent operation -  gives the same result no matter how many times you perform it.
+
+For example, the mathematical operation "multiply by zero" is idempotent because no matter how many times you multiply a number by zero, !!! the result is always same !!!
+
+GET -  the most popular method on the Web
+
+HEAD returns only the response headers with an empty body.
+This method can be used in a scenario when you do not need the entire representation of the resource.
+For example, HEAD can be used to quickly check whether a resource exists on the server or not.
+
+The method OPTIONS is used to get a list of allowed operations on the resource. For example consider the request:
+
+OPTIONS http://MyService/Persons/1 HTTP/1.1
+HOST: MyService
+The service after authorizing and authenticating the request can return something like:
+
+200 OK
+Allow: HEAD, GET, PUT
+The second line contains the list of operations that are allowed for this client.
+
+***
+Difference between PUT and POST
+***
+
+* PUT is idempotent while POST is not
+
+No matter how many times you send a PUT request, the results will be same.
+Making a POST multiple times may result in multiple resources getting created on the server.
+
+* PUT require a complete URL, POST not
+
+PUT http://MyService/Persons/ - WORNG
+PUT http://MyService/Persons/1 - RIGHT - Insert a new person with PersonID=1 if it does not already exist, or else update the existing resource
+POST http://MyService/Persons/ - Insert a new person every time this request is made and generate a new PersonID.
+POST http://MyService/Persons/10 - Update the existing person where PersonID=1
+
+***
+GET vs POST
+***
+Безопасные — это методы, которые могут лишь запросить информацию.
+ Они не могут изменить запрашиваемый ресурс, не могут привести к нежелательным результатам для пользователя или сервера. Примерами безопасных есть запрос HTML кода веб страницы или изображения. 
+ К безопасным относятся методы HEAD и GET.
+
+Небезопасные запросы могут менять содержимое ресурса, к которому обращаются. 
+Примеры таких запросов: отправка сообщений, регистрация, онлайн платежи.
+ К небезопасным относятся методы POST, PUT, DELETE.
+
+Идемпотентность — свойство методов, которые при многочисленном повторном обращении вернут один и тот же результат, кроме случаев когда информация устарела. Это значит, что при обращении к одному и тому же URL все пользователи будут видеть одну и туже веб страницу, изображение, видео и т.п. Таким свойством обладают GET, PUT, DELETE методы.
+
+GET
+
+предназначен для получения данных с сервера;
+тело запроса пустое;
+обрабатываются на стороне сервера быстрее и с меньшим потреблением ресурсов сервера за счет пустого тела запроса;
+передача переменных происходит в адресной строке (так видит пользователь, технически данные предаются в строке запроса) и поэтому видна информация о переменных и их значениях (данные не защищены);
+способен передать небольшое количество данных на сервер: есть ограничения на длину URL, которое зависит от браузера, например, IE6 = 2Kb. На это число и рекомендуют ориентироваться разработчики Yahoo!;
+может передать только ASCII символы;
+такой запрос можно скопировать, сохранить (например, в закладках);
+запрос может кэшироваться (этим можно управлять);
+для дополнительного снижения нагрузки на канал и сервер доступны условные и частичные запросы;
+не разрывает HTTP соединение (при включенном на сервере режиме keepAlive).
+
+POST
+
+предназначен для отправления данных на сервер;
+передача данных происходит в теле запроса;
+обработка на стороне сервера медленнее и «тяжелее», чем GET, потому что помимо заголовков нужно анализировать тело запроса;
+способен передать большие объемы данных;
+способен передать файлы;
+страницу, сгенерированную методом POST нельзя сохранить в закладки;
+разрывает HTTP соединение;
+для передачи даже очень малого объема информации большинством браузеров отправляет минимум два TCP пакета: заголовок, а потом тело запроса.
+
+Простой выбор между GET и POST
+
+если по логике будет происходить небезопасный запрос — использую POST;
+если идемпотентность нежелательна — использую POST;
+если требуется передать большой объем данных или файл — использую POST;
+в остальных случаях использую GET.
+
+***
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+***
+Statelessness
+***
+
+A RESTful service is stateless and does not maintain the application state for any client. 
+
+ A request cannot be dependent on a past request and a service treats each request independently. 
+ HTTP is a stateless protocol by design.
+
+A stateless design looks like so:
+
+Request1: GET http://MyService/Persons/1 HTTP/1.1
+
+Request2: GET http://MyService/Persons/2 HTTP/1.1
+
+Each of these requests can be treated separately.
+
+A stateful design, on the other hand, looks like so:
+
+Request1: GET http://MyService/Persons/1 HTTP/1.1
+
+Request2: GET http://MyService/NextPerson HTTP/1.1
+
+To process the second request, the server needs to remember the last PersonID that the client fetched. In other words, the server needs to remember the current state — otherwise Request2 cannot be processed.
+
+ Design your service in a way that a request never refers to a previous request. 
+ Stateless services are easier to host, easy to maintain, and more scalable. Plus, such services can provide better response time to requests, as it is much easier to load balance them.
+
+***
+Links Between Resources
+***
+
+A resource representation can contain links to other resources like an HTML page contains links to other pages. 
+
+Let's consider the case in which a client requests one resource that contains multiple other resources:
+
+<Club>        
+    <Name>Authors Club</Name>
+    <Persons>
+        <Person>
+            <Name>M. Vaqqas</Name>
+            <URI>http://MyService/Persons/1</URI>
+        </Person>
+        <Person>
+            <Name>S. Allamaraju</Name>
+            <URI>http://MyService/Persons/12</URI>
+        </Person>
+    </Persons>
+</Club>   
+
+***
+Caching
+***
+
+Caching is the concept of storing the generated results and using the stored results instead of generating them repeatedly if the same request arrives in the near future. 
+
+Caching can be controlled using HTTP headers:
+ 0 Date
+ 0 Last Modified
+ 0 Cache-Control:
+ 		Directives:
+ 			- Public
+ 			- Private
+ 			- no-cache/no-store
+ 			- max-age
+ 			- s-maxage
+ 			- must-revalidate
+ 			- proxy-validate
+
+0 Expires
+0 Age
+
+***
+
+ You should document every resource and URI of your serviice for client developers. 
+
+ Service - набір методів, що забезпечують доступ до ресурсів цього сервісу
+ Client - застосунок, що доступається до ресурсів сервісу і використовує їх, наприклад, відображає ці ресурси на екран
+
+ Clients send a request to the server, and the server replies with a response. 
+
+***
+REST is a great way of developing lightweight Web services that are easy to implement, maintain, and discover. HTTP provides an excellent interface to implement RESTful services with features like a uniform interface and caching.

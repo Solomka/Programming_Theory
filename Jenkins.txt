@@ -1,0 +1,76 @@
+The leading open source automation server, Jenkins provides hundreds of plugins to support building, deploying and automating any project.
+Jenkins is an open source automation server written in Java. The project was forked from Hudson after a dispute with Oracle.
+
+ 
+ It supports SCM tools including AccuRev, CVS, Subversion, Git, Mercurial, Perforce, Clearcase and RTC, and can execute Apache Ant, Apache Maven and sbt based projects as well as arbitrary shell scripts and Windows batch commands.
+
+ Builds can be triggered by various means, for example by commit in a version control system, by scheduling via a cron-like mechanism and by requesting a specific build URL. It can also be triggered after the other builds in the queue have completed.
+
+***
+Jenkins - software installed on a server and running in a a servlet container (web server) such as Apache Tomcat
+
+It is a server-based system running in a servlet container such as Apache Tomcat. 
+Jenkins is a software that allows continuous integration. Jenkins will be installed on a server where the central build will take place.
+Jenkins -> automation server: build -> test -> deploy
+***
+
+Jenkins Pipeline is a suite of plugins which supports implementing and integrating continuous delivery pipelines into Jenkins. Pipeline provides an extensible set of tools for modeling simple-to-complex delivery pipelines "as code".
+
+Random-access memory (RAM /ræm/) is a form of computer data storage which stores frequently used program instructions to increase the general speed of a system. A random-access memory device allows data items to be read or written in almost the same amount of time irrespective of the physical location of data inside the memory.
+
+In software engineering, software configuration management (SCM or S/W CM)[1] is the task of tracking and controlling changes in the software, part of the larger cross-disciplinary field of configuration management.[2] SCM practices include revision control and the establishment of baselines. If something goes wrong, SCM can determine what was changed and who changed it. If a configuration is working well, SCM can determine how to replicate it across many hosts.
+
+What is Continuous Integration?
+
+Continuous Integration is a development practice that requires developers to integrate code into a shared repository at regular intervals. This concept was meant to remove the problem of finding later occurrence of issues in the build lifecycle. Continuous integration requires the developers to have frequent builds.
+
+The common practice is that whenever a code commit occurs, a build should be triggered.
+
+Return on Investment (ROI) is the benefit to an investor resulting from an investment of some resource
+ it is one way of considering profits in relation to capital invested.
+
+Continuous Delivery is the natural extension of Continuous Integration: an approach in which teams ensure that every change to the system is releasable, and that we can release any version at the push of a button. Continuous Delivery aims to make releases boring, so we can deliver frequently and get fast feedback on what users care about.
+
+Continuous Delivery can help large organizations become as lean, agile and innovative as startups. Through reliable, low-risk releases, Continuous Delivery makes it possible to continuously adapt software in line with user feedback, shifts in the market and changes to business strategy. Test, support, development and operations work together as one delivery team to automate and streamline the build, test and release process.
+
+Continuous Deployment is closely related to Continuous Integration and refers to the release into production of software that passes the automated tests.
+
+Essentially, “it is the practice of releasing every good build to users,” explains Jez Humble, author of Continuous Delivery.
+
+The goal of CD is to put customers in control of an ongoing cycle of software releases.
+
+, ThoughtWorks developed Go as the first tool designed specifically for the practice of continuous delivery. It automates and streamlines the build-test-release cycle for worry-free, continuous delivery of your product. 
+
+***
+1. Using the Jenkins build server
+Continuous integration is a process in which all development work is integrated as early as possible. The resulting artifacts are automatically created and tested. This process should identify errors as very early in the process.
+
+Jenkins is one open source tool to perform continuous integration and build automation. The basic functionality of Jenkins is to execute a predefined list of steps. The trigger for this execution can be time or event based. For example, every 20 minutes or after a new commit in a Git repository.
+
+The list of steps can, for example, include:
+
+perform a software build with Apache Maven or Gradle
+
+Run a shell script
+
+Archive the build result
+
+Afterwards start the integration tests
+
+Jenkins also monitors the execution of the steps and allows to stop the process if one of the steps fails. Jenkins can also send out notification about the build success or failure.
+
+Jenkins can be extended by additional plug-ins, e.g., for building and testing Android applications or to support the Git version control system.
+
+BUILD
+
+Historically, build has often referred either to the process of converting source code files into standalone software artifact(s) that can be run on a computer, or the result of doing so. However, this is not the case with technologies such as Perl, Ruby or Python which are examples of interpreted languages.
+
+maintainability, extensibility and readability
+
+***
+
+WHAT IS DOCKER?
+
+Docker is the world's leading software containerization platform
+
+Docker containers wrap a piece of software in a complete filesystem that contains everything needed to run: code, runtime, system tools, system libraries – anything that can be installed on a server. This guarantees that the software will always run the same, regardless of its environment.

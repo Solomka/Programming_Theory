@@ -1,0 +1,243 @@
+***
+dojo/request - is a package which provides asynchronous requests in a cross platform way.
+
+dojo/request is comprised of several modules that provide functionality around asynchronous requests
+
+Of course, the aim of the Request API is to further abstract the end developers from having to code for the particular platform they are on, and requiring the dojo/request module would automatically load the dojo/request/xhr module if the code was running in a browser, but the module can be required directly if desired.
+
+This module is implemented in a cross-browser fashion so that end developer don’t need to be aware of the differences between different browsers in order to use the functionality.
+
+
+Instruction:
+
+1. dojo/request
+
+Requiring the dojo/request module returns running the default provider for the current planform (in browser - dojo/request/xhr (deprecates dojo/_base/xhr ) ).
+
+All you need to do is simply require  module dojo/request and specify the resource you need.
+
+Default provider for apps that run in browser is dojo/request/xhr (deprecates dojo/_base/xhr )
+
+
+2. Provider dojo/request/xhr 
+
+dojo/request/xhr is a provider that uses XMLHttpRequest (XHR) objects to make asynchronous requests. It is the default provider for browser based platforms.
+
+ XMLHttpRequest (XHR) is the core of AJAX development and provides an asynchronous way for sending and receiving information in a browser based platform.
+
+Provider will execute the request.
+
+Once the request is fulfilled, the response can be handled by a handler.
+
+The provider returns a promise (see dojo/promise/Promise) 
+that is fulfilled with the handled data of the response. 
+
+By setting the handleAs option to a request, the returned promise will resolve to the resulting data object rather than the text of the response payload.
+
+The payload of the un-handled response is in the text property of the object the response promise resolves to.
+
+Promise is fulfilled when JSON text which is converted to JS Object is send from server (HANDLER help)
+
+The promise returned by the provider has an extra property not on standard promises: RESPONSE.
+ This property is a standard promise that is fulfilled with an object representing the response from the server.
+
+ The returned promise’s response property ( that is a standard promise ) will resolve to an object with a data property that is converted data object. 
+
+ Whatever a handler returns, when used as the handler, will be what the returned promise resolves to and will be put into the data property of the object the response promise resolves to. The payload of the un-handled response is in the text property of the object the response promise resolves to.
+
+This property is a standard promise that is fulfilled with an object representing the response from the server. This object will contain the following properties:
+
+Property	Description
+url	The URL that was originally requested.
+options	Any options that were originally requested.
+data	Contains the data of the response if appropriate.
+text	Contains the text of the response if appropriate.
+status	Contains the status of the request as returned from the provider.
+getHeader(headerName)	A function to retrieve headers sent from the server.
+
+The provider will also error out by calling the errorback function if provided. 
+
+Progress data will be given to the progress handler if it is provided and if the platform supports progress events (any browser supporting XHR2 or node.js).
+
+The provider defaults to GET but the method option can be used to expressly set the method; helper functions are provided for common methods:
+xhr.get()
+xhr.post()
+xhr.put()
+xhr.del()
+
+3. Handler dojo/request/handlers
+
+dojo/request/handlers is a module that provides handlers that deal with the data that is returned in a response to a request.
+
+Handler will convert the response payload (дані корисного навантаження)into a data object.
+
+Handler json - Will attempt to parse the response as a JSON string.
+
+By setting the handleAs option to a request, the returned promise will resolve to the resulting data object rather than the text of the response payload.
+
+The returned promise’s response property will resolve to an object with a data property that is converted data object. 
+
+Whatever a handler returns, when used as the handler, will be what the returned promise resolves to and will be put into the data property of the object the response promise resolves to. The payload of the un-handled response is in the text property of the object the response promise resolves to.
+
+
+Retrieve a JSON resource (./helloworld.json") by means of PROVIDER, which is set to be handled as json ( handleAs: "json")  by means of HANDLER and outputs DATA (then(function(DATA){}), which will be a JavaScript object that has been converted from the JSON text (automatically).
+
+
+
+dojo/request provides the following handlers as a default:
+json - The response is expected to be JSON and is converted to an JS object.
+
+
+
+Examples of working of each component:
+
+1.  dojo/request
+
+require(["dojo/request"], function(request){
+  request("request.html", {
+      handleAs: "json"
+    }).then(function(text){
+      domConst.place("<p>response: <code>" + text + "</code>", "output"); !!!!!!!!!!!!!!!!!!!!!!!
+    }, function(err){
+   domConst.place("<p>error: <p>" + err.response.text + "</p></p>", "output");
+  }, function(evt){
+    // handle a progress event
+  });
+});
+
+2. provider than fulfill reqeust
+
+require(["dojo/request/xhr"], function(xhr){
+  xhr("example.json", {
+    handleAs: "json"
+  }).then(function(data){
+    domConst.place("<p>response: <code>" + JSON.stringify(data) + "</code>", "output"); !!!!!!!!!!!!!!!!!
+  }, function(err){
+    domConst.place("<p>error: <p>" + err.response.text + "</p></p>", "output");
+  }, function(evt){
+    // Handle a progress event from the request if the
+    // browser supports XHR2
+  });
+});
+
+The provider defaults to GET but the method option can be used to expressly set the method; helper functions are provided for common methods:
+xhr.get()
+xhr.post()
+xhr.put()
+xhr.del()
+
+***
+
+dojo/request/registry - Allows registering different providers by a URI pattern, so that different providers can be used based on the target URI without the user having to code separate code paths.
+
+register()
+Normally, dojo/request/handlers is not used directly, except when you want to register a new handler type. In that case, usage would look like this:
+
+***
+
+dojo/_base/xhr
+
+***
+
+As with all dojo._base components, these functions are included within Dojo Base.
+You get this functionality by just including dojo.js in your page.
+
+The XMLHTTP request object (XHR object for short) is one of the basic building blocks for constructing responsive Ajax-drive interactions. 
+
+------------------------------------
+
+Объект XMLHttpRequest (или, как его кратко называют, «XHR») дает возможность из JavaScript делать HTTP-запросы к серверу без перезагрузки страницы.
+
+// 1. Создаём новый объект XMLHttpRequest
+var xhr = new XMLHttpRequest();
+
+// 2. Конфигурируем его: GET-запрос на URL 'phones.json'
+xhr.open('GET', 'phones.json', false);
+
+// 3. Отсылаем запрос
+xhr.send();
+
+// 4. Если код ответа сервера не 200, то это ошибка
+if (xhr.status != 200) {
+  // обработать ошибку
+  alert( xhr.status + ': ' + xhr.statusText ); // пример вывода: 404: Not Found
+} else {
+  // вывести результат
+  alert( xhr.responseText ); // responseText -- текст ответа.
+}
+
+--------------------------------------
+
+
+By allowing you to retrieve data on the user’s behalf without refreshing the whole page the XHR object provides tremendous usage.
+
+But cross-browser XHR usage is beset (оточений) by memory leaks, divergent APIs, a lack of built-in form encoding from JavaScript, and painful corner cases when de-serializing response data.
+
+Dojo provides a solid set of battle-tested XHR wrapper functions to allow you to build Ajax interactions with confidence, use a unified API, and handle forms with ease.
+
+ Read on to learn how easy it is to build powerful Ajax interactions with Dojo.
+
+
+***
+
+dojo/_base/xhr - this module provides XHR wrapper functions:
+
+Problems with using native XHR object for sending из JavaScript asynchronous  HTTP-requests к серверу без перезагрузки страницы:
+
+	- cross-browser XHR object usage differences
+
+Solution with using XHR wrapper functions rovided by dojo/_base/xhr:
+
+	- allow you to build Ajax interactions with confidence, 
+	- use a unified API for diff browsers,
+	-  handle forms with ease
+
+GET REQUEST without page reloading:
+
+1. using dojo/_base/xhr dojo.xhrGet(xhrArgs) method:
+
+ var xhrArgs = {
+    url: "{{dataUrl}}dojo/LICENSE",
+    handleAs: "text",
+    load: function(data){
+      // Replace newlines with nice HTML tags.
+      data = data.replace(/\n/g, "<br>");
+
+      // Replace tabs with spaces.
+      data = data.replace(/\t/g, "&nbsp;&nbsp;&nbsp;");
+
+      targetNode.innerHTML = data;
+    },
+    error: function(error){
+      targetNode.innerHTML = "An unexpected error occurred: " + error;
+    }
+  }
+
+  // Call the asynchronous xhrGet
+  var deferred = dojo.xhrGet(xhrArgs);
+
+2. 
+	// 1. Создаём новый объект XMLHttpRequest
+	var xhr = new XMLHttpRequest();
+
+	// 2. Конфигурируем его: GET-запрос на URL 'phones.json'
+	xhr.open('GET', '{{dataUrl}}dojo/LICENSE', false);
+
+	// 3. Отсылаем запрос
+	xhr.send();
+
+	// 4. Если код ответа сервера не 200, то это ошибка
+	if (xhr.status != 200) {
+  	// обработать ошибку
+ 	 alert( xhr.status + ': ' + xhr.statusText ); // пример вывода: 404: Not Found
+	} else {
+  	// вывести результат
+  	alert( xhr.responseText ); // responseText -- текст ответа.
+	}
+
+dojo/_base/xhr wrapper method return deferred.
+
+
+Return type (dojo.Deferred)
+For both the synchronous and asynchronous cases, the dojo.xhrGet() call will return a ‘dojo.Deferred’ object. This object allows you to define additional callbacks for success and error conditions. It can also be used in place of defining ‘load’ and error’ functions in your request parameters for dojo.xhrGet(). See Example 4 for details on how to use the dojo.Deferred object to set your load and error handlers.
+

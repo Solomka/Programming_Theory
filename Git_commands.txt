@@ -178,10 +178,16 @@ git checkout commit_hash_code - to previous commit
 git reset <commit> - go to particular commit staying all changes in working directory. 
 git reset HEAD~1   - undo last commit
 
+git rm file.txt removes the file from the repo but also deletes it from the local file system.
+git rm  file_name - delete file from the local file system and add deletation to the staging area
+
+To remove the file from the repo and not delete it from the local file system use:
+git rm --cached file.txt
+
 git rm --cached file_name -  remove the file only from the (staging area) and not remove it from the filesystem (working directory)
 git rm -r target/ - remoce folder from file syst
 
-git rm  file_name - delete file from te local file system and add deletation to the staging area
+
 //how to obtain this file again?
 git amend
 git checkout filename

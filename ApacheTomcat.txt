@@ -1,0 +1,27 @@
+***
+Web server
+***
+
+A web server is a computer system that processes requests via HTTP, the basic network protocol used to distribute information on the World Wide Web. 
+The term can refer to the entire system, or specifically to the software that accepts and supervises the HTTP requests.
+
+
+The most common web server software today, that is, the program that actually does the receiving and answering of page requests, is Apache. This open-source software handles more than half of all websites in existence today - many developers of web-based applications and technologies use Apache as their default environment when designing new products. The second most common is Internet Information Services (IIS), released by Microsoft, which accounts for nearly 25% of all websites, leaving various other smaller applications to compete for the remaining niche.
+
+
+
+***
+Apache Tomcat
+***
+
+Apache Tomcat — контейнер сервлетів, розроблений Apache Software Foundation. Повністю написаний мовою програмування Java та реалізує специфікацію сервлетів і Java Server Pages від Sun Microsystems, що є стандартами для розробки веб-застосунків на Java.
+
+Apache Tomcat, often referred to as Tomcat, is an open-source WEB SERVER developed by the Apache Software Foundation (ASF). Tomcat implements several Java EE specifications including Java Servlet, JavaServer Pages (JSP), Java EL, and WebSocket, and 
+
+* Provides a "pure Java" HTTP web server environment in which Java code can run.
+
+Tomcat is developed and maintained by an open community of developers under the auspices of the Apache Software Foundation, released under the Apache License 2.0 license, and is open-source software.
+
+Internet Protocol address, or IP address for short.
+Uniform Resource Locator, or URL
+operating systems.
