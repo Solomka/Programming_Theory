@@ -32,6 +32,61 @@ REST recommends a uniform interface and HTTP provides you that uniform interface
 6. Links between resources
 7. Caching
 
+***
+
+REST - REpresentational State Transfer:
+    * Resource-based forces Action-based
+    * Representations (form data passed back and furth between client and server)
+
+Client-server architectural style for networked hypermedia applications
+
+    Resource (noun) identified by URI
+    Action (verb) - HTTP request
+
+    Representation is independent from the resource (represent part of the resource state)
+
+    Ex:
+    1. Resource - person
+    2. Service  - contact info (GET)
+    3. Representation - (name, address, phone number) in JSON format
+------------------------------------------------------
+The six constraints of REST architectual style are: 
+------------------------------------------------------
+
+1. Uniform Interface
+    * interface between client and server -> HTTP verbs: GET/POST/PUT/DELETEs
+2. Stateless
+    * server (host of restful service) contain no client data
+    * each request contains enough context to process the message
+
+    HOST:
+        - a computer system (bla_api) that is accessed by a user (bla) working at a remote location
+        - a computer with a Web server (bla_api) that serves the pages for one or more Web sites.
+        - Hosting - service that is provided by the company (host ), when your Web server that serves the pages the Web site is located on company computer. 
+        - Host - computer that provides services (server)
+        - computer (large server) - a host provider of services
+        *** mainframe computer (large server) with server (host of restful service) ---> HOST (bla_api) (a host provider of restful services)-------------  SERVER ------------- http://bla_api <--  domain
+            intelligent workstations ---> use mainframe computer (large server) as a HOST PROVIDER OF SERVICES ----------- CLIENT --------http://bla <-- domain
+        *** http://bla_api - REST APi
+        *** http://bla - REST service
+        * Domain names are used in URLs to identify particular Web pages. 
+          For example, in the URL http://www.pcwebopedia.com/index.html, the domain name is pcwebopedia.com.
+        * Because the Internet is based on IP addresses, not domain names, every Web server requires a Domain Name System (DNS) server to translate  domain names into IP addresses.
+
+
+3. Cacheable 
+    * (server responses (representations) are cacheable)
+    * everything that comes from server or REST service is cacheable
+4. Client-Server architecture
+5. Layered System
+    * layered architecure:
+        - client can't assume direct connection to server  => software or hardware intermediaries between client and server
+6. Code on Demand (optional)
+    * server transfer logic to client (js code)
+    * client execute logic (js code)
+
+***
+
 Web service follows four basic design principles:
 
 - Use HTTP methods explicitly.
@@ -114,12 +169,13 @@ RESTful systems should have a uniform interface. HTTP 1.1 provides a set of meth
 
 HTTP 1.1 methods, verbs:
 
-GET - READ - Safe
-POST - CREATE/UPDATE- N/A
-PUT - UPDATE/CREATE - Idempotent
-DELETE - DELETE - Idempotent
+GET - READ - Safe + Idempotent - GET /addresses/1
+POST - CREATE/UPDATE- N/A      - POST /addresses
+PUT - UPDATE/CREATE - Idempotent - replace and existing entity - PUT /addresses/1
+DELETE - DELETE - Idempotent   - DELETE /addresses/1
 OPTIONS - List the allowed operations on a resource - Safe
 HEAD - Return only the response headers and no response body - Safe
+PATCH - Idempotent - Update only the specified fields of an entity at a URI - PATCH  /addresses/1
 
 * Safe operation  - does not have any effect on the original value of the resource
 
@@ -159,7 +215,7 @@ Making a POST multiple times may result in multiple resources getting created on
 PUT http://MyService/Persons/ - WORNG
 PUT http://MyService/Persons/1 - RIGHT - Insert a new person with PersonID=1 if it does not already exist, or else update the existing resource
 POST http://MyService/Persons/ - Insert a new person every time this request is made and generate a new PersonID.
-POST http://MyService/Persons/1 - Update the existing person where PersonID=1
+POST http://MyService/Persons/10 - Update the existing person where PersonID=1
 
 ***
 GET vs POST
@@ -204,6 +260,23 @@ POST
 если идемпотентность нежелательна — использую POST;
 если требуется передать большой объем данных или файл — использую POST;
 в остальных случаях использую GET.
+
+HTTP status codes
+
+Status codes indicate the result of the HTTP request.
+
+1XX - informational
+2XX - success
+3XX - redirection
+4XX - client error
+5XX - server error
+
+Media types
+
+The Accept and Content-Type HTTP headers can be used to describe the content being sent or requested within an HTTP request. 
+The client may set Accept to application/json if it is requesting a response in JSON. 
+Conversely, when sending data, setting the Content-Type to application/xml tells the client that the data being sent in the request is XML.
+
 
 ***
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -281,7 +354,7 @@ Caching can be controlled using HTTP headers:
 
 ***
 
- You should document every resource and URI of your service for client developers. 
+ You should document every resource and URI of your serviice for client developers. 
 
  Service - набір методів, що забезпечують доступ до ресурсів цього сервісу
  Client - застосунок, що доступається до ресурсів сервісу і використовує їх, наприклад, відображає ці ресурси на екран
@@ -291,6 +364,38 @@ Caching can be controlled using HTTP headers:
 ***
 REST is a great way of developing lightweight Web services that are easy to implement, maintain, and discover. HTTP provides an excellent interface to implement RESTful services with features like a uniform interface and caching.
 
+HTTP methods (verbs):
 
-***
+1. GET - The GET method requests a representation of the specified resource. Requests using GET should only retrieve data and should have no1 other effect. (This is also true of some other HTTP methods.)[1] The W3C has published guidance principles on this distinction.
 
+2. HEAD - The HEAD method asks for a response identical to that of a GET request, but without the response body. This is useful for retrieving meta-information written in response headers, without having to transport the entire content.
+
+3. POST - method requests that the server accept the entity enclosed in the request as a new subordinate of the web resource identified by the URI. The data POSTed might be, for example, an annotation for existing resources; a message for a bulletin board, newsgroup, mailing list, or comment thread; a block of data that is the result of submitting a web form to a data-handling process; or an item to add to a database.
+
+4. PUT - The PUT method requests that the enclosed entity be stored under the supplied URI. If the URI refers to an already existing resource, it is modified; if the URI does not point to an existing resource, then the server can create the resource with that URI.
+
+5. PATCH - The PATCH method applies partial modifications to a resource.
+
+6. DELETE - The DELETE method deletes the specified resource.
+
+7. OPTIONS - The OPTIONS method returns the HTTP methods that the server supports for the specified URL
+
+8. TRACE - The TRACE method echoes the received request so that a client can see what (if any) changes or additions have been made by intermediate servers.
+
+9. CONNECT - the CONNECT method converts the request connection to a transparent TCP/IP tunnel, usually to facilitate SSL-encrypted communication (HTTPS) through an unencrypted HTTP proxy
+
+HTTP - stateless protocol
+
+GET - READ - Safe + Idempotent - GET /addresses/1
+HEAD - Return only the response headers and no response body - Safe + Idempotent
+OPTIONS - List the allowed operations on a resource - Safe + Idempotent
+TRACE - echoes the received request so that a client can see what (if any) changes or additions have been made by intermediate servers.(Save + Idempotent)
+
+PUT - UPDATE/CREATE - Idempotent - replace and existing entity - PUT /addresses/1
+DELETE - DELETE - Idempotent   - DELETE /addresses/1
+
+POST - CREATE/UPDATE- N/A      - POST /addresses
+
+
+
+PATCH - Idempotent - Update only the specified fields of an entity at a URI - PATCH  /addresses/1

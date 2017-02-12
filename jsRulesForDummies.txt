@@ -1,0 +1,50 @@
+* work with object as with array
+
+var objects = {}
+  objects[widget.object.id] = objects
+
+ * null vs undefined
+
+ undefined - means a variable has been declared but has not yet been assigned a value
+
+ var TestVar;
+ alert(TestVar); //shows undefined
+ alert(typeof TestVar); //shows undefined
+
+
+null -  is an assignment value. It can be assigned to a variable as a representation of no value:
+
+var TestVar = null;
+alert(TestVar); //shows null
+alert(typeof TestVar); //shows object
+
+
+null === undefined // false
+null == undefined // true
+null === null // true
+
+null = 'value' // ReferenceError
+undefined = 'value' // 'value'
+
+*** Check if an object/value is not null ***
+
+The only values that are not truthy in JavaScript are the following (a.k.a. falsy values):
+
+null
+undefined
+0
+"" (the empty string)
+false
+NaN
+
+* 1 variant:
+
+  if (!object.objects || typeof(object.objects) != 'object') return;
+
+* 2 variant:
+  if (object != undefined && object != null && object != 'null')
+
+* 3 variant:
+
+   if ( (this.object.prop != 'null') && !!(this.object.prop) )
+

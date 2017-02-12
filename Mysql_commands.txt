@@ -111,3 +111,31 @@ CREATE TABLE EXEMPLAR
     FOREIGN KEY     (ISBN)      REFERENCES    BOOKS (ISBN),
     FOREIGN KEY     (READER_ID)     REFERENCES    READERS (READER_ID)
 );
+
+***
+ON UPDATE/ ON DELETE
+***
+
+* CASCADE
+* SET NULL
+* RESTRICT: Rejects the delete or update operation for the parent table. 
+ Specifying RESTRICT (or NO ACTION) is the same as omitting the ON DELETE or ON UPDATE clause.
+* NO ACTION: A keyword from standard SQL. In MySQL, equivalent to RESTRICT. The MySQL Server rejects the delete or update operation for the parent table if there is a related foreign key value in the referenced table. Some database systems have deferred checks, and NO ACTION is a deferred check. In MySQL, foreign key constraints are checked immediately, so NO ACTION is the same as RESTRICT.
+* SET DEFAULT
+
+For an ON DELETE or ON UPDATE that is not specified, the default action is always RESTRICT.
+
+
+CREATE TABLE parent (
+    id INT NOT NULL,
+    PRIMARY KEY (id)
+) ENGINE=INNODB;
+
+CREATE TABLE child (
+    id INT,
+    parent_id INT,
+    INDEX par_ind (parent_id),
+    FOREIGN KEY (parent_id)
+        REFERENCES parent(id)
+        ON DELETE CASCADE
+) ENGINE=INNODB;

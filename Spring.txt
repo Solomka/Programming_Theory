@@ -1,0 +1,150 @@
+The Spring container is at the core of the Spring Framework. The container will create the objects, wire them together, configure them, and manage their complete lifecycle from creation till destruction. The Spring container uses dependency injection (DI) to manage the components that make up an application. These objects are called Spring Beans
+
+The Spring IoC container makes use of Java POJO classes and configuration metadata to produce a fully configured and executable system or application.
+
+The objects that form the backbone of your application and that are managed by the Spring IoC container are called beans. A bean is an object that is instantiated, assembled, and otherwise managed by a Spring IoC container. These beans are created with the configuration metadata that you supply to the container, for example, in the form of XML <bean/> definitions which you have already seen in previous chapters.
+
+Two distinct types of Spring containers:
+
+1. Spring BeanFactory Container
+2. 
+
+@Autowired
+    private ApplicationContext applicationContext;
+
+DoctorDto doctorDto = applicationContext.getBean(DoctorDto.class);
+
+Bean Scopes
+
+When defining a <bean> in Spring, you have the option of declaring a scope for that bean. 
+For example, To force Spring to produce a new bean instance each time one is needed, you should declare the bean's scope attribute to be prototype. 
+Similar way if you want Spring to return the same bean instance each time one is needed, you should declare the bean's scope attribute to be singleton.
+
+he Spring Framework supports following five scopes:
+
+As a rule, use the prototype scope for all state-full beans and the singleton scope for stateless beans.
+
+***
+Spring annotations
+***
+
+
+In spring autowiring concepts, we learned about @Autowired annotation that it handles only wiring. 
+You still have to define the beans themselves so the container is aware of them and can inject them for you. 
+But with @Component, @Repository, @Service and @Controller annotations in place and after enabling automatic component scanning, spring will automatically import the beans into the container so you don’t have to define them explicitly with XML. 
+These annotations are called Stereotype annotations as well.
+
+
+1) The @Component annotation marks a java class as a bean so the component-scanning mechanism of spring can pick it up and pull it into the application context. 
+
+2) The @Repository annotation is a specialization of the @Component annotation with similar use and functionality. In addition to importing the DAOs into the DI container, it also makes the unchecked exceptions (thrown from DAO methods) eligible for translation into Spring DataAccessException.
+
+3) The @Service annotation is also a specialization of the component annotation. It doesn’t currently provide any additional behavior over the @Component annotation, but it’s a good idea to use @Service over @Component in service-layer classes because it specifies intent better. Additionally, tool support and additional behavior might rely on it in the future.
+
+4) @Controller annotation marks a class as a Spring Web MVC controller. It too is a @Component specialization, so beans marked with it are automatically imported into the DI container. When you add the @Controller annotation to a class, you can use another annotation i.e. @RequestMapping; to map URLs to instance methods of a class.
+
+When component-scan is declared, you no longer need to declare context:annotation-config, because autowiring is implicitly enabled when component scanning is enabled.
+
+***
+Autowiring modes
+***
+
+no: This option is default for spring framework and it means that autowiring is OFF. You have to explicitly set the dependencies using tags in bean definitions.
+byName: This option enables the dependency injection based on bean names. When autowiring a property in bean, property name is used for searching a matching bean definition in configuration file. If such bean is found, it is injected in property. If no such bean is found, a error is raised.
+
+
+byType: This option enables the dependency injection based on bean types. When autowiring a property in bean, property’s class type is used for searching a matching bean definition in configuration file. If such bean is found, it is injected in property. If no such bean is found, a error is raised.
+
+
+constructor: Autowiring by constructor is similar to byType, but applies to constructor arguments. In autowire enabled bean, it will look for class type of constructor arguments, and then do a autowire by type on all constructor arguments. Please note that if there isn’t exactly one bean of the constructor argument type in the container, a fatal error is raised.
+
+
+autodetect: Autowiring by autodetect uses either of two modes i.e. constructor or byType modes. First it will try to look for valid constructor with arguments, If found the constructor mode is chosen. If there is no constructor defined in bean, or explicit default no-args constructor is present, the autowire byType mode is chosen.
+
+* Using autowiring with @Autowired annotations
+
+Apart from the autowiring modes provided in bean configuration file, autowiring can be specified in bean classes also using @Autowired annotation. To use @Autowired annotation in bean classes, you must first enable the annotation in spring application using below configuration.
+
+///enable the annotation in spring application for @Autowired etc.
+<context:annotation-config />
+
+Same can be acheived using ‘AutowiredAnnotationBeanPostProcessor’ bean definition in configuration file.
+
+<bean class ="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+
+    
+    <!-- When component-scan is declared, you no longer need to declare context:annotation-config, 
+        because autowiring is implicitly enabled when component scanning is enabled. -->
+    <!-- provide Your Base package to scan annotations for components -->
+<context:component-scan base-package="ukma.eCommerce" />
+
+Now, when annotation configuration has been enables, you are free to autowire bean dependencies using @Autowired, the way you like. 
+This is done by three ways:
+
+1) @Autowired on properties
+
+When @Autowired is used on properties, it is equivalent to autowiring by ‘byType’ in configuration file.
+
+2) @Autowired on property setters
+
+When @Autowired is used on setters, it is also equivalent to autowiring by ‘byType’ in configuration file.
+
+3) @Autowired on constructors
+
+When @Autowired is used on bean’s constructor, it is also equivalent to autowiring by ‘constructor’ in configuration file.
+
+***
+
+Making autowiring error safe using required=false
+
+you will need to make autowiring optional so that if no dependency is found, application should not throw any exception and autowiring should simpy be ignored.
+
+This can be done in two ways:
+
+1)If you want to make specific bean autowiring non-mandatory for a specific bean property, use required=”false” attribute in @Autowired annoration
+
+***
+@Autowired (required=false)
+@Qualifier ("finance")
+private DepartmentBean departmentBean;
+***
+
+2) If you want to apply optional autowiring at global level i.e. for all properties in all beans; use below configuration setting.
+
+<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor">
+    <property name="requiredParameterValue" value="false" />
+</bean>
+
+***
+Excluding a bean from being available for autowiring
+***
+
+1) Using ‘autowire-candidate‘ as false totally exclude a bean from being an autowire candidate. It totally exclude that specific bean definition from being available to the autowiring infrastructure.
+
+------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+    <context:annotation-config />
+ 
+    <bean id="employee" class="com.howtodoinjava.autowire.constructor.EmployeeBean" autowire="constructor">
+        <property name="fullName" value="Lokesh Gupta"/>
+    </bean>
+    <!--Will be available for autowiring-->
+    <bean id="humanResource" class="com.howtodoinjava.autowire.constructor.DepartmentBean" >
+        <property name="name" value="Human Resource" />
+    </bean>
+ 
+    <!--Will not participate in autowiring-->
+     <bean id="finance"      class="com.howtodoinjava.autowire.constructor.DepartmentBean" autowire-candidate="false">
+        <property name="name" value="Finance" />
+    </bean>
+</beans>
+-----------------
+
+2) Another option is to limit autowire candidates based on pattern-matching against bean names. The top-level element accepts one or more patterns within its ‘default-autowire-candidates‘ attribute. For example, to limit autowire candidate status to any bean whose name ends with ‘Impl’, provide a value of ‘*Impl’. To provide multiple patterns, define them in a comma-separated list.
+
+-----------------
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire-candidates="*Impl,*Dao">
+    <context:annotation-config />
+ </beans>
