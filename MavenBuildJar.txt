@@ -1,0 +1,108 @@
+mvn package  - make maven build
+mvn clean install -U - skip unit tests
+
+I had a similar problem but all answers here didn't help me.
+
+For me the problem was a failing test. But i still want my project to build. A failing test shouldn't break the build.
+
+To solve this i added a configuration to surefire so that it ignores a failing test.
+
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>2.19.1</version>
+    <configuration>
+        <testFailureIgnore>true</testFailureIgnore>
+    </configuration>
+</plugin>
+
+
+java -jar Hello.jar - run jar file
+java.exe -jar name.jar - run jar file
+
+javac -version
+java -version
+javac HelloWorld.java
+
+Run as > Maven install
+Project -> Properties Java Compiler
+
+
+
+How can I add dependencies in a jar?
+
+You can put both log4j.jar and jodatime.jar inside the final.jar, but your classes are unable to call other classes which is inside the unpack log4j.jar, Java jar is designed like this, unless you create a special class loader like one-jar plugin.
+
+– Alternatively, use maven-assembly-plugin to extract all dependency jars into raw classes, and group it together. Read this StackOverflow thread. This hack is workable in project with less dependencies only, for large project with many dependencies, it will cause Java class name conflict issue.
+
+– Try one-jar plugin, it will create a fat-jar, which includes the entire project’s dependencies into a single jar file, read this article – Create a fat Jar file with Maven
+
+4.2 Solution
+The one-jar solution is really good, but I don’t like the custom class loader and fat-jar concept. My simplest and always working solution is copy the entire project’s dependencies to a pre-defined folder, and define the dependency classpath in the jar’s manifest file.
+
+Below is the updated and final pom.xml, to use maven-dependency-plugin to copy all dependencies to target/dependency-jars/ folder, and use maven-jar-plugin to add the dependency classpath.
+
+how to use Maven build tool, One-JAR plugin to create a single Jar together with its dependency Jars into a single executable Jar file, so called fat Jar.
+
+the class loader doesn't load jars from within jars
+
+ Maven Shade Plugin
+
+ Maven Shade plugin is a better plugin to create fat/uber jar, if compare with assembly plugin, because it provides class relocating feature, to avoid same class name conflict in the classpath.
+
+to create a Jar together with its dependency Jars into a single executable Jar file, so called fat Jar or uber Jar.
+
+Two jar files will be created in the target folder.
+
+dateutils.jar – Project and dependency classes in a single jar, this is what you want.
+original-dateutils.jar – Only your project classes
+
+List out the content of dateutils.jar
+
+META-INF/MANIFEST.MF
+META-INF/
+com/
+com/mkyong/
+com/mkyong/core/
+com/mkyong/core/utils/
+com/mkyong/core/utils/App.class
+META-INF/maven/
+META-INF/maven/com.mkyong.core.utils/
+META-INF/maven/com.mkyong.core.utils/dateUtils/
+META-INF/maven/com.mkyong.core.utils/dateUtils/pom.xml
+META-INF/maven/com.mkyong.core.utils/dateUtils/pom.properties
+META-INF/LICENSE.txt
+META-INF/NOTICE.txt
+org/
+org/joda/
+org/joda/time/
+org/joda/time/base/
+org/joda/time/base/AbstractDateTime.class
+org/joda/time/base/AbstractDuration.class
+//...
+org/joda/time/Weeks.class
+org/joda/time/YearMonth$Property.class
+org/joda/time/YearMonth.class
+org/joda/time/YearMonthDay$Property.class
+org/joda/time/YearMonthDay.class
+org/joda/time/Years.class
+META-INF/maven/joda-time/
+META-INF/maven/joda-time/joda-time/
+META-INF/maven/joda-time/joda-time/pom.xml
+META-INF/maven/joda-time/joda-time/pom.properties
+
+Uber JAR, in short, is a JAR containing everything.
+
+Normally in Maven, we rely on dependency management. An artifact contains only the classes/resources of itself. Maven will be responsible to find out all artifacts (JARs etc) that the project depending on when the project is built.
+
+An uber-jar is something that take all dependencies, and extract the content of the dependencies and put them with the classes/resources of the project itself, in one big JAR. By having such uber-jar, it is easy for execution, because you will need only one big JAR instead of tons of small JARs to run your app. It also ease distribution in some case.
+
+Just a side-note. Avoid using uber-jar as Maven dependency, as it is ruining the dependency resolution feature of Maven. Normally we create uber-jar only for the final artifact for actual deployment or for manual distribution, but not for putting to Maven repository.
+
+Update: I have just discovered I haven't answered one part of the question : "What's the point of renaming the packages of the dependencies?". Here is some brief updates and hopefully will help people having similar question.
+
+Creating uber-jar for ease of deployment is one use case of shade plugin. There are also other common use cases which involve package renaming.
+
+For example, I am developing Foo library, which depends on a specific version (e.g. 1.0) of Bar library. Assuming I cannot make use of other version of Bar lib (because API change, or other technical issues, etc). If I simply declare Bar:1.0 as Foo's dependency in Maven, it is possible to fall into a problem: A Qux project is depending on Foo, and also Bar:2.0 (and it cannot use Bar:1.0 because Qux needs to use new feature in Bar:2.0). Here is the dilemma: should Qux use Bar:1.0 (which Qux's code will not work) or Bar:2.0 (which Foo's code will not work)?
+
+In order to solve this problem, developer of Foo can choose to use shade plugin to rename its usage of Bar, so that all classes in Bar:1.0 jar are embedded in Foo jar, and the package of the embedded Bar classes is changed from com.bar to com.foo.bar. By doing so, Qux can safely depends on Bar:2.0 because now Foo is no longer depending on Bar, and it is using is own copy of "altered" Bar located in another package.

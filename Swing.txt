@@ -1,0 +1,20 @@
+The LayoutManagers are used to arrange components in a particular manner. LayoutManager is an interface that is implemented by all the classes of layout managers. 
+
+There are following classes that represents the layout managers:
+
+java.awt.BorderLayout
+java.awt.GridLayout
+java.awt.FlowLayout
+javax.swing.BoxLayout
+
+java.awt.CardLayout
+java.awt.GridBagLayout
+
+javax.swing.GroupLayout
+javax.swing.ScrollPaneLayout
+javax.swing.SpringLayout etc.
+
+***
+java.awt.BorderLayout
+***
+
