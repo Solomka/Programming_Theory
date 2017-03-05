@@ -45,6 +45,16 @@ By default, an Observable and the chain of operators that you apply to it will d
 
         observeOn method tells RxJava library to perform the computation, as part of Operator or Subscriber declared after its definition, on a thread provided by the Scheduler.
 
+        Observable<Response> response = Observable.fromCallable(() -> {
+        return client.newCall(request).execute();
+    })
+    .subscribeOn(Schedulers.io())
+    .map(response -> response.body().string()) // Ok!
+    .observeOn(AndroidSchedulers.mainThread());Y//
+
+    Because I applied the map operator after observeOn, that’s going to run on Android’s main thread. We don’t want to be reading from an HTTP response on the main thread, we want that to be happening before we change to the main thread. The request comes in, and it emits the response down the Observable chain. We map that into the result string, and then we change threads to the main thread, where we can ultimately subscribe and show it in the UI.
+
+
 ----------------------------------------------------------------------------------------------------
 
 The difference should be clearer when you look at the behaviour of each when you pass it an Iterable (for example a List):
@@ -88,6 +98,86 @@ inferred - вгаданий
 * Intermediate operations transforms one stream to another, while terminal operations produce a result. 
 
 -----------
+
+***
+RxJava 2 for Android
+***
+
+***
+Observable vs Flowable
+***
+
+//doesn't have backpressure
+Observable<MotionEvent> events
+    = RxView.touches(paintView);
+
+//does have backpressure
+Flowable<Row> rows
+    = db.createQuery("SELECT * …");
+
+***
+For Observable, this type allows you to call the dispose method, which essentially says, “I am done with this resource, I don’t want any more callbacks.”
+
+***
+
+Flowable.fromCallable(() -> "Hello");
+
+Observable.fromCallable(() -> "Hello");
+
+Maybe.fromCallable(() -> "Hello");
+Maybe.fromAction(() -> System.out.println("Hello"));
+Maybe.fromRunnable(() -> System.out.println("Hello"))
+
+Single.fromCallable(() -> "Hello");
+
+Completable.fromCallable(() -> "Ignored!");
+Completable.fromAction(() -> System.out.println("Hello"));
+Completable.fromRunnable(() -> System.out.println("Hello"));
+
+fromCallable is available on all five types. These are for modeling synchronous sources of a single piece of data. It’s what you would use a method for in an imperative world, a method that returns a return value. In the reactive world, fromCallable is what you use to model that.
+
+***
+
+Flowable.create(e -> { … });
+
+Observable.create(e -> { … });
+
+Maybe.create(e -> { … });
+
+Single.create(e -> { … });
+
+Completable.create(e -> { … });
+
+***
+
+Flowable<String>
+
+interface Subscriber<T> {
+    void onNext(T t);
+    void onComplete();
+    void onError(Throwable t);
+    void onSubscribe(Subscription s);
+}
+
+interface Subscription {
+    void cancel();
+    void request(long r);
+}
+
+Observable<String> 
+
+interface Observer<T> {
+    void onNext(T t);
+    void onComplete();
+    void onError(Throwable t);
+void onSubscribe(Disposable d);
+}
+
+interface Disposable {
+    void dispose();
+}
+
+---------------------------------------------------------------------------------------------------------------
 
 Programming languages:
 
