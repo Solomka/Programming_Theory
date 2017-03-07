@@ -16,6 +16,7 @@ To solve this i added a configuration to surefire so that it ignores a failing t
     </configuration>
 </plugin>
 
+C:\Program Files\Java\jdk1.7.0_75
 
 java -jar Hello.jar - run jar file
 java.exe -jar name.jar - run jar file
@@ -58,6 +59,11 @@ dateutils.jar – Project and dependency classes in a single jar, this is what y
 original-dateutils.jar – Only your project classes
 
 List out the content of dateutils.jar
+
+
+The basic format of the command for viewing the contents of a JAR file is:
+
+jar tf jar-file
 
 META-INF/MANIFEST.MF
 META-INF/

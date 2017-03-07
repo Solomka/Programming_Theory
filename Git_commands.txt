@@ -293,7 +293,7 @@ If the branch name you’re trying to checkout (a) doesn’t exist and (b) exact
 
 * git checkout serverfix - Branch serverfix set up to track remote branch serverfix from origin. 
 
-* git branch -u origin/serverfix - Branch serverfix set up to track remote branch serverfix from origin. 
+* git branch -u origin/serverfix - Already existing local branch serverfix set up to track remote branch serverfix from origin. 
 
 ***
 git revert
