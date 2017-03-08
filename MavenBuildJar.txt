@@ -63,7 +63,7 @@ List out the content of dateutils.jar
 
 The basic format of the command for viewing the contents of a JAR file is:
 
-jar tf jar-file
+jar tf jar-file.jar
 
 META-INF/MANIFEST.MF
 META-INF/
@@ -112,3 +112,7 @@ Creating uber-jar for ease of deployment is one use case of shade plugin. There 
 For example, I am developing Foo library, which depends on a specific version (e.g. 1.0) of Bar library. Assuming I cannot make use of other version of Bar lib (because API change, or other technical issues, etc). If I simply declare Bar:1.0 as Foo's dependency in Maven, it is possible to fall into a problem: A Qux project is depending on Foo, and also Bar:2.0 (and it cannot use Bar:1.0 because Qux needs to use new feature in Bar:2.0). Here is the dilemma: should Qux use Bar:1.0 (which Qux's code will not work) or Bar:2.0 (which Foo's code will not work)?
 
 In order to solve this problem, developer of Foo can choose to use shade plugin to rename its usage of Bar, so that all classes in Bar:1.0 jar are embedded in Foo jar, and the package of the embedded Bar classes is changed from com.bar to com.foo.bar. By doing so, Qux can safely depends on Bar:2.0 because now Foo is no longer depending on Bar, and it is using is own copy of "altered" Bar located in another package.
+
+
+!!!!!!!!!!!!!!!!!!!
+http://stackoverflow.com/questions/19655184/no-compiler-is-provided-in-this-environment-perhaps-you-are-running-on-a-jre-ra
